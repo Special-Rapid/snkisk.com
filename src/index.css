@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800&family=Instrument+Sans:wght@400;500;600;700&family=Pixelify+Sans:wght@500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg-base: #f7f4ef;
+  --bg-cream: #fff9f1;
+  --text-strong: #211d2d;
+  --text-soft: rgba(33, 29, 45, 0.68);
+  --line-soft: rgba(255, 255, 255, 0.58);
+  --line-muted: rgba(64, 58, 89, 0.12);
+  --shadow-soft: 0 32px 80px rgba(133, 129, 175, 0.16);
+  --shadow-panel: 0 24px 60px rgba(125, 119, 160, 0.14);
+  --panel-bg: rgba(255, 255, 255, 0.34);
+  --panel-border: rgba(255, 255, 255, 0.52);
+  --accent-blue: #9ad6ff;
+  --accent-lavender: #c8b7ff;
+  --accent-pink: #ffbfd6;
+  --accent-peach: #ffd8ba;
+  --accent-cream: #fff6cf;
+  --ease-sharp: cubic-bezier(0.18, 0.89, 0.32, 1.18);
+  --ease-float: cubic-bezier(0.42, 0, 0.18, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg-base);
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100svh;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.85), transparent 30%),
+    linear-gradient(135deg, #f7f4ef 0%, #f4f8ff 26%, #fff5fb 56%, #fffaf1 100%);
+  color: var(--text-strong);
+  font-family: 'Instrument Sans', 'Avenir Next', 'Helvetica Neue', sans-serif;
+}
+
+body,
+button {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+}
+
+#root {
+  min-height: 100svh;
+  height: 100%;
+}

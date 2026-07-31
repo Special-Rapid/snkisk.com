@@ -1,0 +1,52 @@
+.stage,
+.frame {
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.stage {
+  position: relative;
+  background: #ffffff;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+}
+
+.handoffOverlay {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 0.92fr;
+  overflow: hidden;
+  pointer-events: none;
+  background: #122cf3;
+}
+
+.handoffSlat {
+  display: block;
+  width: 100%;
+  height: 130%;
+  transform-origin: center;
+}
+
+.handoffSlatCyan {
+  background: linear-gradient(155deg, #12e6f3, #155fff);
+}
+
+.handoffSlatViolet {
+  background: linear-gradient(155deg, #5b23ff, #d50fce);
+}
+
+.handoffSlatOrange {
+  background: linear-gradient(155deg, #ff237d, #ff8b13);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .handoffOverlay {
+    display: none;
+  }
+}

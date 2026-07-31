@@ -1,0 +1,64 @@
+.page {
+  min-height: 100svh;
+}
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: clip;
+  isolation: isolate;
+  background: #ffffff;
+}
+
+.sceneStrike {
+  position: absolute;
+  z-index: 1;
+  top: 48%;
+  left: -18%;
+  width: 136%;
+  height: clamp(2.5rem, 8vw, 7rem);
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--scene-accent), var(--scene-surface), transparent);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.sceneStamp {
+  position: absolute;
+  top: clamp(1rem, 2vw, 1.6rem);
+  left: 50%;
+  z-index: 5;
+  transform: translateX(-50%);
+  color: color-mix(in srgb, var(--scene-text) 68%, transparent);
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.sceneCanvas {
+  position: relative;
+  z-index: 2;
+  min-height: 100svh;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+@media (max-width: 720px) {
+  .sceneStamp {
+    top: 0.9rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+  }
+
+  .sceneCanvas {
+    padding: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sceneStrike {
+    display: none;
+  }
+}

@@ -1,0 +1,143 @@
+.root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--scene-bg-1), var(--scene-bg-2) 46%, var(--scene-bg-3));
+}
+
+.root::before,
+.root::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.root::before {
+  inset: -20%;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--scene-accent) 48%, transparent), transparent 27%),
+    radial-gradient(circle at 78% 72%, color-mix(in srgb, var(--scene-bg-3) 48%, transparent), transparent 32%);
+  background-size: 145% 145%;
+  mix-blend-mode: screen;
+  opacity: 0.66;
+  animation: scene-field-drift 13s ease-in-out infinite alternate;
+}
+
+.root::after {
+  inset: 0;
+  z-index: 5;
+  opacity: 0.13;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.38) 0.7px, transparent 0.7px);
+  background-size: 26px 26px;
+  mix-blend-mode: soft-light;
+  animation: scene-grain-drift 7s steps(7, end) infinite;
+}
+
+.baseGradient,
+.blob,
+.colorField,
+.mesh,
+.grain {
+  position: absolute;
+  inset: 0;
+}
+
+.baseGradient,
+.blob,
+.colorField,
+.mesh,
+.grain {
+  z-index: 1;
+}
+
+.baseGradient {
+  background:
+    radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--scene-accent) 48%, white) 0%, transparent 28%),
+    radial-gradient(circle at 82% 24%, color-mix(in srgb, var(--scene-bg-3) 52%, white) 0%, transparent 24%),
+    linear-gradient(130deg, var(--scene-bg-1), var(--scene-bg-2) 48%, var(--scene-bg-3));
+  background-size: 140% 140%;
+  will-change: opacity, transform, filter, background-position;
+}
+
+.blob {
+  border-radius: 999px;
+  filter: blur(30px);
+  will-change: transform, opacity;
+}
+
+.blobA {
+  top: -12%;
+  left: -8%;
+  width: 34rem;
+  height: 34rem;
+  background: radial-gradient(circle, color-mix(in srgb, var(--scene-bg-1) 74%, white) 0%, transparent 70%);
+}
+
+.blobB {
+  right: -8%;
+  bottom: -14%;
+  width: 32rem;
+  height: 32rem;
+  background: radial-gradient(circle, color-mix(in srgb, var(--scene-accent) 66%, white) 0%, transparent 72%);
+}
+
+.colorField {
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.16), transparent 36%),
+    radial-gradient(circle at 55% 46%, color-mix(in srgb, var(--scene-bg-2) 34%, white) 0%, transparent 44%),
+    linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.08));
+  background-size: 130% 130%;
+  mix-blend-mode: overlay;
+}
+
+.mesh {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 34%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--scene-bg-2) 22%, white) 0%, transparent 58%);
+  mix-blend-mode: soft-light;
+}
+
+.grain {
+  opacity: 0.14;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.34) 0.8px, transparent 0.8px),
+    radial-gradient(rgba(7, 16, 37, 0.16) 0.8px, transparent 0.8px);
+  background-position: 0 0, 18px 18px;
+  background-size: 34px 34px;
+  mix-blend-mode: soft-light;
+}
+
+@media (max-width: 720px) {
+  .blobA,
+  .blobB {
+    filter: blur(24px);
+  }
+
+  .blobA {
+    width: 20rem;
+    height: 20rem;
+  }
+
+  .blobB {
+    width: 18rem;
+    height: 18rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root::before,
+  .root::after {
+    animation: none;
+  }
+}
+
+@keyframes scene-field-drift {
+  from { background-position: 0% 0%, 100% 100%; }
+  to { background-position: 100% 42%, 18% 14%; }
+}
+
+@keyframes scene-grain-drift {
+  from { background-position: 0 0; }
+  to { background-position: 26px 26px; }
+}

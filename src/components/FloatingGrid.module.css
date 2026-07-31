@@ -1,0 +1,191 @@
+.root {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.objectZone {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(74vw, 64rem);
+  height: min(62vh, 34rem);
+  transform: translate(-50%, -50%);
+}
+
+.chip,
+.broadcastLabel,
+.footerTag,
+.broadcastDigits {
+  position: absolute;
+  color: var(--scene-text);
+  will-change: transform, opacity, filter;
+}
+
+.chip,
+.broadcastLabel,
+.footerTag {
+  padding: 0.62rem 0.84rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.chipLeft {
+  left: 8%;
+  top: 54%;
+}
+
+.chipCenter {
+  left: 50%;
+  bottom: 6%;
+  translate: -50% 0;
+}
+
+.chipRight {
+  right: 10%;
+  top: 54%;
+}
+
+.broadcastZone {
+  height: min(54vh, 30rem);
+}
+
+.liveLabel {
+  left: 20%;
+  top: 22%;
+}
+
+.fpsLabel {
+  left: 18%;
+  bottom: 18%;
+}
+
+.nextLabel {
+  right: 18%;
+  top: 36%;
+}
+
+.broadcastDigits {
+  right: 20%;
+  bottom: 18%;
+  font-size: clamp(1rem, 1.6vw, 1.4rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.broadcastArrow {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: min(16rem, 24vw);
+  height: 0.28rem;
+  background: rgba(255, 255, 255, 0.92);
+  transform-origin: left center;
+}
+
+.broadcastArrow::after {
+  content: '';
+  position: absolute;
+  right: -0.12rem;
+  top: -0.24rem;
+  width: 0.74rem;
+  height: 0.74rem;
+  border-top: 0.24rem solid rgba(255, 255, 255, 0.92);
+  border-right: 0.24rem solid rgba(255, 255, 255, 0.92);
+  transform: rotate(45deg);
+}
+
+.broadcastRing {
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  width: 8rem;
+  height: 8rem;
+  margin-left: -4rem;
+  margin-top: -4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.18);
+}
+
+.broadcastRing::after {
+  content: '';
+  position: absolute;
+  inset: 1rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+}
+
+.footerTag {
+  left: 50%;
+  bottom: 8%;
+  translate: -50% 0;
+}
+
+@media (max-width: 720px) {
+  .objectZone {
+    width: calc(100vw - 2rem);
+    height: min(58vh, 30rem);
+  }
+
+  .chip,
+  .broadcastLabel,
+  .footerTag {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+  }
+
+  .chipLeft {
+    left: 2%;
+    top: 54%;
+  }
+
+  .chipCenter {
+    bottom: 9%;
+  }
+
+  .chipRight {
+    right: 2%;
+    top: 64%;
+  }
+
+  .liveLabel {
+    left: 8%;
+    top: 18%;
+  }
+
+  .fpsLabel {
+    left: 10%;
+    bottom: 22%;
+  }
+
+  .nextLabel {
+    right: 8%;
+    top: 34%;
+  }
+
+  .broadcastDigits,
+  .broadcastRing {
+    display: none;
+  }
+
+  .broadcastArrow {
+    left: 44%;
+    top: 62%;
+    width: 7rem;
+  }
+
+  .footerTag {
+    bottom: 9%;
+    max-width: calc(100vw - 2rem);
+    text-align: center;
+  }
+}
