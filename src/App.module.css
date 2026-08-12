@@ -45,8 +45,35 @@
   background: linear-gradient(155deg, #ff237d, #ff8b13);
 }
 
+.siteHandoff {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1.05fr 0.92fr 1.1fr;
+  overflow: hidden;
+  pointer-events: none;
+  background: #fff8f2;
+}
+
+.siteHandoffSlat {
+  display: block;
+  width: 100%;
+  height: 132%;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.siteHandoffCream { background: linear-gradient(150deg, #fff8f2, #ffd8b1); }
+.siteHandoffOrange { background: linear-gradient(150deg, #ff9a58, #e95d34); }
+.siteHandoffBlue { background: linear-gradient(150deg, #21e1e5, #3151ee); }
+
 @media (prefers-reduced-motion: reduce) {
   .handoffOverlay {
     display: none;
+  }
+
+  .siteHandoffSlat {
+    transform: none !important;
   }
 }

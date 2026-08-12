@@ -83,34 +83,34 @@ const CUT_FRAME_MOTIONS: Record<ShowreelCutId, CutFrameMotion> = {
   },
 };
 
-function useShowreelCut(reduceMotion: boolean) {
+function useShowreelCut(reduceMotion: boolean, onComplete: () => void) {
   const [cut, setCut] = useState<ShowreelCutId>('transition');
   const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
     let cutIndex = 0;
-    let loopCount = 0;
     let timeoutId = 0;
 
     // Discrete timing prevents a skipped cut when a background tab drops animation frames.
     const playCut = () => {
       const activeCut = SHOWREEL_CUTS[cutIndex];
       setCut(activeCut.id);
-      setCycle(loopCount);
+      setCycle(0);
 
       const duration = activeCut.endMs - activeCut.startMs;
       timeoutId = window.setTimeout(() => {
-        cutIndex = (cutIndex + 1) % SHOWREEL_CUTS.length;
-        if (cutIndex === 0) {
-          loopCount += 1;
+        if (cutIndex === SHOWREEL_CUTS.length - 1) {
+          onComplete();
+          return;
         }
+        cutIndex += 1;
         playCut();
       }, reduceMotion ? Math.max(1600, duration) : duration);
     };
 
     playCut();
     return () => window.clearTimeout(timeoutId);
-  }, [reduceMotion]);
+  }, [onComplete, reduceMotion]);
 
   return { cut, cycle };
 }
@@ -689,9 +689,13 @@ function HensyokuMateChapter({ reduceMotion }: { reduceMotion: boolean }) {
   );
 }
 
-export default function PortfolioSequence() {
+type PortfolioSequenceProps = {
+  onComplete: () => void;
+};
+
+export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps) {
   const reduceMotion = Boolean(useReducedMotion());
-  const { cut, cycle } = useShowreelCut(reduceMotion);
+  const { cut, cycle } = useShowreelCut(reduceMotion, onComplete);
   const cutKey = `${cycle}-${cut}`;
   const cutFrameMotion = CUT_FRAME_MOTIONS[cut];
 
