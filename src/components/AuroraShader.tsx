@@ -1,24 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
-import { sculptToMinimalRenderer } from 'shader-park-core';
+import shaderParkRuntimeUrl from 'shader-park-core/dist/shader-park-core.umd.js?url';
 import styles from './AuroraShader.module.css';
 
 type AuroraShaderProps = {
   reduceMotion: boolean;
 };
 
+type ShaderParkRuntime = {
+  sculptToMinimalRenderer: (
+    canvas: HTMLCanvasElement,
+    source: string,
+    updateUniforms?: () => Record<string, number | number[]>,
+  ) => void;
+};
+
+declare global {
+  interface Window {
+    'shader-park-core'?: ShaderParkRuntime;
+  }
+}
+
 // This keeps the supplied Shader Park composition intact: a torus and sphere
 // mix together, then mirror into the glowing object field behind the portfolio.
 const AURORA_SHADER_CODE = `
-  let click = input();
-  let buttonHover = input();
-
   function getNoiseValue(p, offset, rings) {
     return nsin(noise(p + offset) * rings);
   }
 
   let nscale = 1.2;
   let rings = 6.0;
-  let mixAmt = 1 - click;
+  let mixAmt = 1.0;
 
   let s = getSpace();
   let samplePos = s * nscale + vec3(0, 0, time) * 0.1;
@@ -57,12 +68,6 @@ const AURORA_SHADER_CODE = `
 export default function AuroraShader({ reduceMotion }: AuroraShaderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererStartedRef = useRef(false);
-  const interactionRef = useRef({
-    buttonHover: 0,
-    currButtonHover: 0,
-    click: 0,
-    currClick: 0,
-  });
   const [webglAvailable, setWebglAvailable] = useState(true);
 
   useEffect(() => {
@@ -75,49 +80,29 @@ export default function AuroraShader({ reduceMotion }: AuroraShaderProps) {
       return;
     }
 
-    const state = interactionRef.current;
-
-    const onPointerEnter = () => {
-      state.buttonHover = 5;
-    };
-    const onPointerLeave = () => {
-      state.buttonHover = 0;
-      state.click = 0;
-    };
-    const onPointerDown = () => {
-      state.click = 1;
-    };
-    const onPointerUp = () => {
-      state.click = 0;
-    };
-
-    canvas.addEventListener('pointerenter', onPointerEnter);
-    canvas.addEventListener('pointerleave', onPointerLeave);
-    canvas.addEventListener('pointerdown', onPointerDown);
-    canvas.addEventListener('pointerup', onPointerUp);
-
-    if (!rendererStartedRef.current) {
-      rendererStartedRef.current = true;
-
-      // The renderer owns its lightweight time loop, matching the original Shader Park setup.
-      sculptToMinimalRenderer(canvas, AURORA_SHADER_CODE, () => {
-        state.currButtonHover = state.currButtonHover * 0.999 + state.buttonHover * 0.001;
-        state.currClick = state.currClick * 0.97 + state.click * 0.03;
-
-        return {
-          buttonHover: state.currButtonHover,
-          click: state.currClick,
-          _scale: 1.5,
-        };
-      });
+    const existingRuntime = window['shader-park-core'];
+    if (existingRuntime) {
+      startRenderer(existingRuntime, canvas, rendererStartedRef);
+      return;
     }
 
-    return () => {
-      canvas.removeEventListener('pointerenter', onPointerEnter);
-      canvas.removeEventListener('pointerleave', onPointerLeave);
-      canvas.removeEventListener('pointerdown', onPointerDown);
-      canvas.removeEventListener('pointerup', onPointerUp);
+    // Load the unbundled UMD file as a Vite asset. Its compiler intentionally evaluates
+    // the sculpt DSL, so it must retain the official runtime's original binding names.
+    const script = document.createElement('script');
+    script.src = shaderParkRuntimeUrl;
+    script.async = true;
+    script.onload = () => {
+      const runtime = window['shader-park-core'];
+      if (runtime) {
+        startRenderer(runtime, canvas, rendererStartedRef);
+      } else {
+        setWebglAvailable(false);
+      }
     };
+    script.onerror = () => setWebglAvailable(false);
+    document.head.append(script);
+
+    return () => script.remove();
   }, [reduceMotion]);
 
   if (reduceMotion || !webglAvailable) {
@@ -125,4 +110,16 @@ export default function AuroraShader({ reduceMotion }: AuroraShaderProps) {
   }
 
   return <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />;
+}
+
+function startRenderer(
+  runtime: ShaderParkRuntime,
+  canvas: HTMLCanvasElement,
+  rendererStartedRef: { current: boolean },
+) {
+  if (rendererStartedRef.current) return;
+  rendererStartedRef.current = true;
+
+  // The unmodified runtime owns its animation loop, matching the provided HTML setup.
+  runtime.sculptToMinimalRenderer(canvas, AURORA_SHADER_CODE, () => ({ _scale: 1.5 }));
 }

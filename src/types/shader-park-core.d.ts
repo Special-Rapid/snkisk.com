@@ -1,7 +1,4 @@
-declare module 'shader-park-core' {
-  export function sculptToMinimalRenderer(
-    canvas: HTMLCanvasElement,
-    source: string | (() => void),
-    updateUniforms?: () => Record<string, number | number[]>,
-  ): void;
+declare module 'shader-park-core/dist/shader-park-core.umd.js?url' {
+  const source: string;
+  export default source;
 }
