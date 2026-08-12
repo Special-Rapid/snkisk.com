@@ -720,9 +720,6 @@ export default function PortfolioSequence() {
           </motion.div>
         </AnimatePresence>
         <CutTransition key={`transition-${cutKey}`} cut={cut} reduceMotion={reduceMotion} />
-        <div className={styles.playbackMark} data-cut={cut} aria-hidden="true">
-          CUT {String(SHOWREEL_CUTS.findIndex((item) => item.id === cut) + 1).padStart(2, '0')} / {String(SHOWREEL_CUTS.length).padStart(2, '0')}
-        </div>
       </main>
     </MotionConfig>
   );
