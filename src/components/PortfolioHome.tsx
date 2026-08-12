@@ -2,10 +2,10 @@ import { motion, useReducedMotion } from 'motion/react';
 import styles from './PortfolioHome.module.css';
 
 const PROJECTS = [
-  { code: 'GO', name: 'go.snkisk.com', detail: 'ONE LINK / MANY WAYS' },
-  { code: 'LP', name: 'MirrorProxy / Legitils', detail: 'LIVE MATCH SIGNAL', href: 'https://lmp.snkisk.com/' },
-  { code: 'MC', name: 'mc.snkisk.com', detail: 'MINECRAFT PRODUCTION' },
-  { code: 'HM', name: '偏食メイト', detail: 'YOUR PALETTE / IN PROGRESS', href: 'https://hensyoku-mate.snkisk.com/' },
+  { code: 'GO', name: 'Link Shortener', url: 'go.snkisk.com', href: 'https://go.snkisk.com/' },
+  { code: 'LP', name: 'MirrorProxy / Legitils', url: 'lmp.snkisk.com', href: 'https://lmp.snkisk.com/' },
+  { code: 'MC', name: 'Minecraft Production', url: 'mc.snkisk.com', href: 'https://mc.snkisk.com/' },
+  { code: 'HM', name: '偏食メイト', url: 'hensyoku-mate.snkisk.com', href: 'https://hensyoku-mate.snkisk.com/' },
 ];
 
 export default function PortfolioHome() {
@@ -14,6 +14,7 @@ export default function PortfolioHome() {
   return (
     <main className={styles.home} aria-label="snkisk portfolio home">
       <div className={styles.glow} aria-hidden="true" />
+      <div className={styles.dotWave} aria-hidden="true" />
       <motion.header
         className={styles.header}
         initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -28, filter: 'blur(10px)' }}
@@ -43,10 +44,11 @@ export default function PortfolioHome() {
       </section>
 
       <section className={styles.projectGrid} aria-label="Projects">
-        {PROJECTS.map(({ code, name, detail, href }, index) => (
-          <motion.article
+        {PROJECTS.map(({ code, name, url, href }, index) => (
+          <motion.a
             className={styles.project}
             key={code}
+            href={href}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 34, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: reduceMotion ? 0.16 : 0.46, delay: reduceMotion ? index * 0.04 : 0.48 + index * 0.09, ease: [0.18, 0.89, 0.32, 1] }}
@@ -54,10 +56,10 @@ export default function PortfolioHome() {
             <span className={styles.projectCode}>{code}</span>
             <div>
               <h2>{name}</h2>
-              {href ? <a className={styles.projectLink} href={href}>{detail}</a> : <p>{detail}</p>}
+              <p>{url}</p>
             </div>
             <span className={styles.projectArrow}>↗</span>
-          </motion.article>
+          </motion.a>
         ))}
       </section>
 

@@ -24,10 +24,24 @@
 
 .home::before {
   inset: 0;
-  opacity: 0.32;
+  opacity: 0.19;
   background-image: radial-gradient(rgba(255, 255, 255, 0.58) 1px, transparent 1.3px);
   background-size: 0.55rem 0.55rem;
   mask-image: linear-gradient(110deg, transparent 8%, #000 38%, transparent 84%);
+}
+
+.dotWave {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.82;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.7) 1px, transparent 1.35px);
+  background-size: 0.55rem 0.55rem;
+  mask-image: radial-gradient(ellipse 24% 145% at 0% 55%, #000 0 18%, transparent 58%);
+  mask-repeat: no-repeat;
+  mask-size: 58% 100%;
+  animation: dot-wave 6.8s linear infinite;
 }
 
 .home::after {
@@ -112,11 +126,20 @@
   grid-template-columns: auto 1fr auto;
   align-items: start;
   gap: 0.75rem;
-  min-height: 7.3rem;
+  min-height: 6.3rem;
   padding: clamp(0.8rem, 1.5vw, 1.3rem);
   border: 1px solid rgba(255, 255, 255, 0.54);
   background: rgba(255, 255, 255, 0.13);
   backdrop-filter: blur(0.7rem);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.project:hover,
+.project:focus-visible {
+  border-color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.23);
 }
 
 .projectCode {
@@ -149,31 +172,22 @@
   letter-spacing: 0.06em;
 }
 
-.projectLink {
-  display: inline-block;
-  margin-top: 0.42rem;
-  color: inherit;
-  font-size: clamp(0.54rem, 0.68vw, 0.67rem);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-decoration-color: rgba(255, 255, 255, 0.6);
-  text-underline-offset: 0.22em;
-}
-
-.projectLink:hover,
-.projectLink:focus-visible {
-  color: #fffbd5;
-  text-decoration-color: currentColor;
-}
-
 .projectArrow {
   font-size: 1.15rem;
   font-weight: 800;
 }
 
 .footer {
-  padding-top: clamp(1rem, 2.2vw, 1.8rem);
+  padding-top: clamp(0.55rem, 1.15vw, 0.9rem);
   color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes dot-wave {
+  from { mask-position: -58% 0; opacity: 0.2; }
+  22% { opacity: 0.82; }
+  52% { opacity: 0.38; }
+  76% { opacity: 0.8; }
+  to { mask-position: 158% 0; opacity: 0.2; }
 }
 
 @media (max-width: 760px) {
@@ -189,4 +203,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .glow { display: none; }
+  .dotWave { animation: none; opacity: 0.38; mask-position: 30% 0; }
 }
