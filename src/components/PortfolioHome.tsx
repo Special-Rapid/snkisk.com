@@ -2,10 +2,10 @@ import { motion, useReducedMotion } from 'motion/react';
 import styles from './PortfolioHome.module.css';
 
 const PROJECTS = [
-  ['GO', 'go.snkisk.com', 'ONE LINK / MANY WAYS'],
-  ['LP', 'MirrorProxy / Legitils', 'LIVE MATCH SIGNAL'],
-  ['MC', 'mc.snkisk.com', 'MINECRAFT PRODUCTION'],
-  ['HM', '偏食メイト', 'YOUR PALETTE / IN PROGRESS'],
+  { code: 'GO', name: 'go.snkisk.com', detail: 'ONE LINK / MANY WAYS' },
+  { code: 'LP', name: 'MirrorProxy / Legitils', detail: 'LIVE MATCH SIGNAL', href: 'https://lmp.snkisk.com/' },
+  { code: 'MC', name: 'mc.snkisk.com', detail: 'MINECRAFT PRODUCTION' },
+  { code: 'HM', name: '偏食メイト', detail: 'YOUR PALETTE / IN PROGRESS', href: 'https://hensyoku-mate.snkisk.com/' },
 ];
 
 export default function PortfolioHome() {
@@ -43,7 +43,7 @@ export default function PortfolioHome() {
       </section>
 
       <section className={styles.projectGrid} aria-label="Projects">
-        {PROJECTS.map(([code, name, detail], index) => (
+        {PROJECTS.map(({ code, name, detail, href }, index) => (
           <motion.article
             className={styles.project}
             key={code}
@@ -54,7 +54,7 @@ export default function PortfolioHome() {
             <span className={styles.projectCode}>{code}</span>
             <div>
               <h2>{name}</h2>
-              <p>{detail}</p>
+              {href ? <a className={styles.projectLink} href={href}>{detail}</a> : <p>{detail}</p>}
             </div>
             <span className={styles.projectArrow}>↗</span>
           </motion.article>

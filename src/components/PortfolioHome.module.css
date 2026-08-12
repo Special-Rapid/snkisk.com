@@ -149,6 +149,23 @@
   letter-spacing: 0.06em;
 }
 
+.projectLink {
+  display: inline-block;
+  margin-top: 0.42rem;
+  color: inherit;
+  font-size: clamp(0.54rem, 0.68vw, 0.67rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-decoration-color: rgba(255, 255, 255, 0.6);
+  text-underline-offset: 0.22em;
+}
+
+.projectLink:hover,
+.projectLink:focus-visible {
+  color: #fffbd5;
+  text-decoration-color: currentColor;
+}
+
 .projectArrow {
   font-size: 1.15rem;
   font-weight: 800;
