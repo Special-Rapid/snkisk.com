@@ -1,184 +1,128 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { sculptToMinimalRenderer } from 'shader-park-core';
 import styles from './AuroraShader.module.css';
-
-const VERTEX_SHADER = `
-  attribute vec2 a_position;
-  void main() {
-    gl_Position = vec4(a_position, 0.0, 1.0);
-  }
-`;
-
-const FRAGMENT_SHADER = `
-  precision highp float;
-
-  uniform vec2 u_resolution;
-  uniform vec2 u_orbCenter;
-  uniform float u_time;
-
-  float hash(vec2 p) {
-    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-  }
-
-  float noise(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(
-      mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
-      mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
-      u.y
-    );
-  }
-
-  float fbm(vec2 p) {
-    float value = 0.0;
-    float amplitude = 0.5;
-    for (int i = 0; i < 5; i++) {
-      value += amplitude * noise(p);
-      p = p * 2.04 + vec2(7.3, 2.1);
-      amplitude *= 0.5;
-    }
-    return value;
-  }
-
-  void main() {
-    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-    float aspect = u_resolution.x / u_resolution.y;
-    vec2 p = vec2(uv.x * aspect, uv.y);
-    float time = u_time * 0.12;
-
-    vec2 flow = p * 1.55;
-    flow.x += fbm(flow + vec2(time, -time * 0.35)) * 0.64;
-    flow.y += fbm(flow * 1.62 + vec2(-time * 0.6, time)) * 0.4;
-    float field = fbm(flow * 2.1 + vec2(time * 0.7, -time));
-    float bands = sin((flow.x + flow.y * 0.62 + field * 1.7) * 5.4 + time * 1.6) * 0.5 + 0.5;
-
-    vec3 blue = vec3(0.055, 0.15, 0.96);
-    vec3 cyan = vec3(0.06, 0.84, 1.0);
-    vec3 violet = vec3(0.47, 0.10, 0.96);
-    vec3 pink = vec3(1.0, 0.05, 0.54);
-    vec3 coral = vec3(1.0, 0.32, 0.24);
-
-    vec3 color = mix(blue, cyan, smoothstep(0.15, 0.82, field));
-    color = mix(color, violet, smoothstep(0.22, 0.74, bands));
-    color = mix(color, pink, smoothstep(0.58, 0.95, fbm(flow * 1.2 + 4.2)) * 0.74);
-
-    vec2 orbCenter = u_orbCenter;
-    float distanceToOrb = length(p - orbCenter);
-    float orbRadius = 0.34;
-    float orbMask = 1.0 - smoothstep(orbRadius * 0.72, orbRadius, distanceToOrb);
-    float orbNoise = fbm((p - orbCenter) * 5.6 + vec2(time * 1.15, -time));
-    vec3 orbColor = mix(violet, pink, smoothstep(0.26, 0.78, orbNoise));
-    orbColor = mix(orbColor, coral, smoothstep(0.6, 0.94, orbNoise) * 0.5);
-    color = mix(color, orbColor, orbMask * 0.7);
-
-    float rim = smoothstep(0.021, 0.0, abs(distanceToOrb - orbRadius));
-    float outerGlow = 1.0 - smoothstep(orbRadius, orbRadius * 1.45, distanceToOrb);
-    color += vec3(0.84, 0.94, 1.0) * rim * 0.92;
-    color += vec3(0.45, 0.36, 1.0) * outerGlow * 0.22;
-
-    float flare = pow(max(0.0, 1.0 - distance(p, orbCenter + vec2(0.0, -0.34)) * 1.65), 4.0);
-    color += vec3(1.0, 0.71, 0.28) * flare * 0.44;
-    color += (field - 0.5) * 0.13;
-
-    gl_FragColor = vec4(color, 1.0);
-  }
-`;
 
 type AuroraShaderProps = {
   reduceMotion: boolean;
 };
 
-function compileShader(gl: WebGLRenderingContext, type: number, source: string) {
-  const shader = gl.createShader(type);
-  if (!shader) return null;
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null;
-}
+// This keeps the supplied Shader Park composition intact: a torus and sphere
+// mix together, then mirror into the glowing object field behind the portfolio.
+const AURORA_SHADER_CODE = `
+  let click = input();
+  let buttonHover = input();
+
+  function getNoiseValue(p, offset, rings) {
+    return nsin(noise(p + offset) * rings);
+  }
+
+  let nscale = 1.2;
+  let rings = 6.0;
+  let mixAmt = 1 - click;
+
+  let s = getSpace();
+  let samplePos = s * nscale + vec3(0, 0, time) * 0.1;
+
+  let deepBlue = vec3(0.025, 0.055, 0.42);
+  let auroraCyan = vec3(0.04, 0.64, 1.0);
+  let auroraPink = vec3(1.0, 0.06, 0.54);
+
+  let pattern = getNoiseValue(samplePos, 0.0, rings);
+  let baseColor = mix(deepBlue, auroraCyan, pattern);
+  let finalCol = mix(baseColor, auroraPink, pow(pattern, 5.0));
+
+  color(finalCol);
+  shine(0.4);
+
+  rotateX(mouse.y * 0.1);
+  rotateX(mouse.y * 0.1);
+  rotateY(mouse.x * 0.1);
+
+  shape(() => {
+    // Keep the supplied torus, sphere, and mirror geometry centered as one object.
+    rotateX(PI / 2);
+    torus(0.8, 0.5);
+    sphere(0.28);
+    mixGeo(mixAmt);
+    mirrorN(3, 0.1);
+    shape(() => {
+      rotateX(time * 0.1);
+      rotateZ(time * 0.1);
+      boxFrame(vec3(0.1), 0.005);
+      sphere(0.05);
+    })();
+  })();
+`;
 
 export default function AuroraShader({ reduceMotion }: AuroraShaderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rendererStartedRef = useRef(false);
+  const interactionRef = useRef({
+    buttonHover: 0,
+    currButtonHover: 0,
+    click: 0,
+    currClick: 0,
+  });
+  const [webglAvailable, setWebglAvailable] = useState(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || reduceMotion) return;
 
-    const gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power' });
-    if (!gl) return;
+    // Shader Park's minimal renderer needs WebGL2; keep a static aurora fallback when unavailable.
+    if (!canvas.getContext('webgl2')) {
+      setWebglAvailable(false);
+      return;
+    }
 
-    const vertexShader = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
-    const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
-    if (!vertexShader || !fragmentShader) return;
+    const state = interactionRef.current;
 
-    const program = gl.createProgram();
-    if (!program) return;
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
-
-    const position = gl.getAttribLocation(program, 'a_position');
-    const resolution = gl.getUniformLocation(program, 'u_resolution');
-    const orbCenter = gl.getUniformLocation(program, 'u_orbCenter');
-    const time = gl.getUniformLocation(program, 'u_time');
-    const buffer = gl.createBuffer();
-    if (!buffer || position < 0 || !resolution || !orbCenter || !time) return;
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-
-    let centerX = 0;
-    let centerY = 0;
-
-    const draw = (timestamp: number) => {
-      gl.useProgram(program);
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.enableVertexAttribArray(position);
-      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform2f(resolution, canvas.width, canvas.height);
-      gl.uniform2f(orbCenter, centerX, centerY);
-      gl.uniform1f(time, timestamp / 1000);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    const onPointerEnter = () => {
+      state.buttonHover = 5;
+    };
+    const onPointerLeave = () => {
+      state.buttonHover = 0;
+      state.click = 0;
+    };
+    const onPointerDown = () => {
+      state.click = 1;
+    };
+    const onPointerUp = () => {
+      state.click = 0;
     };
 
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      const scale = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(1, Math.floor(rect.width * scale));
-      canvas.height = Math.max(1, Math.floor(rect.height * scale));
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
-      const ringDiameter = Math.min(rect.width * 0.54, rootFontSize * 48);
-      const ringCenterX = rect.width * 1.14 - ringDiameter / 2;
-      const ringCenterYFromTop = rect.height * 0.09 + ringDiameter / 2;
-      const aspect = canvas.width / canvas.height;
-      centerX = (ringCenterX / rect.width) * aspect;
-      centerY = 1 - ringCenterYFromTop / rect.height;
-      // Resizing clears a canvas, so redraw even when the animated loop is disabled.
-      draw(0);
-    };
+    canvas.addEventListener('pointerenter', onPointerEnter);
+    canvas.addEventListener('pointerleave', onPointerLeave);
+    canvas.addEventListener('pointerdown', onPointerDown);
+    canvas.addEventListener('pointerup', onPointerUp);
 
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(canvas);
+    if (!rendererStartedRef.current) {
+      rendererStartedRef.current = true;
 
-    let animationFrame = 0;
-    const animate = (timestamp: number) => {
-      draw(timestamp);
-      animationFrame = window.requestAnimationFrame(animate);
-    };
-    if (!reduceMotion) animationFrame = window.requestAnimationFrame(animate);
+      // The renderer owns its lightweight time loop, matching the original Shader Park setup.
+      sculptToMinimalRenderer(canvas, AURORA_SHADER_CODE, () => {
+        state.currButtonHover = state.currButtonHover * 0.999 + state.buttonHover * 0.001;
+        state.currClick = state.currClick * 0.97 + state.click * 0.03;
+
+        return {
+          buttonHover: state.currButtonHover,
+          click: state.currClick,
+          _scale: 1.5,
+        };
+      });
+    }
 
     return () => {
-      observer.disconnect();
-      window.cancelAnimationFrame(animationFrame);
-      gl.deleteBuffer(buffer);
-      gl.deleteProgram(program);
-      gl.deleteShader(vertexShader);
-      gl.deleteShader(fragmentShader);
+      canvas.removeEventListener('pointerenter', onPointerEnter);
+      canvas.removeEventListener('pointerleave', onPointerLeave);
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      canvas.removeEventListener('pointerup', onPointerUp);
     };
   }, [reduceMotion]);
+
+  if (reduceMotion || !webglAvailable) {
+    return <div className={styles.staticAurora} aria-hidden="true" />;
+  }
 
   return <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />;
 }
