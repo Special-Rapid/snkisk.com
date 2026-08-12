@@ -14,7 +14,9 @@ export default function PortfolioHome() {
   return (
     <main className={styles.home} aria-label="snkisk portfolio home">
       <div className={styles.glow} aria-hidden="true" />
-      <div className={styles.dotWave} aria-hidden="true" />
+      <div className={styles.orbitField} aria-hidden="true">
+        <i /><i /><i /><i />
+      </div>
       <motion.header
         className={styles.header}
         initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -28, filter: 'blur(10px)' }}
