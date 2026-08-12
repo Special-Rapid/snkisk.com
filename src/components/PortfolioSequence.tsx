@@ -7,22 +7,20 @@ import styles from './PortfolioSequence.module.css';
 const CUT_EASE: [number, number, number, number] = [0.18, 0.89, 0.32, 1.08];
 const SHARP_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-const SHOWREEL_DURATION_MS = 22500;
+const SHOWREEL_DURATION_MS = 19900;
 
 const SHOWREEL_CUTS = [
-  { id: 'transition', startMs: 0, endMs: 2600 },
-  { id: 'links', startMs: 2600, endMs: 6000 },
-  { id: 'legitils', startMs: 6000, endMs: 10200 },
-  { id: 'proxy', startMs: 10200, endMs: 13600 },
-  { id: 'minecraft', startMs: 13600, endMs: 18000 },
-  { id: 'hensyoku', startMs: 18000, endMs: SHOWREEL_DURATION_MS },
+  { id: 'links', startMs: 0, endMs: 3400 },
+  { id: 'legitils', startMs: 3400, endMs: 7600 },
+  { id: 'proxy', startMs: 7600, endMs: 11000 },
+  { id: 'minecraft', startMs: 11000, endMs: 15400 },
+  { id: 'hensyoku', startMs: 15400, endMs: SHOWREEL_DURATION_MS },
 ] as const;
 
 type ShowreelCutId = (typeof SHOWREEL_CUTS)[number]['id'];
-type TransitionKind = 'slats' | 'capsule' | 'brand' | 'iris' | 'minecraft-break' | 'tiles';
+type TransitionKind = 'capsule' | 'brand' | 'iris' | 'minecraft-break' | 'tiles';
 
 const CUT_TRANSITIONS: Record<ShowreelCutId, TransitionKind> = {
-  transition: 'slats',
   links: 'capsule',
   legitils: 'brand',
   proxy: 'iris',
@@ -50,12 +48,6 @@ type CutFrameMotion = {
 };
 
 const CUT_FRAME_MOTIONS: Record<ShowreelCutId, CutFrameMotion> = {
-  // The foreground sweep owns the wipe; chapter text itself never gets clipped mid-word.
-  transition: {
-    initial: { opacity: 0, y: 32, scale: 0.98 },
-    animate: { opacity: 1, y: 0, scale: 1 },
-    exit: { opacity: 0, y: -24, scale: 1.01 },
-  },
   links: {
     initial: { opacity: 0, x: 44, scale: 1.02 },
     animate: { opacity: 1, x: 0, scale: 1 },
@@ -84,7 +76,7 @@ const CUT_FRAME_MOTIONS: Record<ShowreelCutId, CutFrameMotion> = {
 };
 
 function useShowreelCut(reduceMotion: boolean, onComplete: () => void) {
-  const [cut, setCut] = useState<ShowreelCutId>('transition');
+  const [cut, setCut] = useState<ShowreelCutId>('links');
   const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
@@ -255,20 +247,6 @@ function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
       animate={reduceMotion ? { opacity: 0 } : { opacity: [1, 1, 0] }}
       transition={transition}
     >
-      {kind === 'slats' ? (
-        <div className={styles.transitionSlats}>
-          {[styles.transitionSlatCyan, styles.transitionSlatViolet, styles.transitionSlatOrange].map((className, index) => (
-            <motion.i
-              className={`${styles.transitionSlat} ${className}`}
-              key={className}
-              initial={{ scaleY: 1, y: 0 }}
-              animate={{ scaleY: [1, 1, 0], y: [0, 0, index % 2 === 0 ? '-65%' : '65%'] }}
-              transition={{ duration: reduceMotion ? 0.01 : 0.92 + index * 0.08, times: [0, 0.46, 1], ease: CUT_EASE }}
-            />
-          ))}
-        </div>
-      ) : null}
-
       {kind === 'capsule' ? (
         <motion.div
           className={styles.transitionCapsule}
@@ -350,48 +328,6 @@ function MotionFrame({ className, children, label }: MotionFrameProps) {
     <section className={className} aria-label={label}>
       {children}
     </section>
-  );
-}
-
-function MotionIntro({ reduceMotion }: { reduceMotion: boolean }) {
-  return (
-    <MotionFrame className={`${styles.frame} ${styles.motionIntro}`} label="Portfolio transition">
-      <div className={styles.introRay} />
-      <div className={styles.introMetaTop}>
-        <span className={styles.orbitDot} />
-        <span>SHOWREEL COMPLETE<br />08:00 / 08:00</span>
-      </div>
-      <div className={styles.introRule} />
-      <span className={styles.introChapter}>CHAPTER 01<br />OPENING</span>
-
-      <motion.h2
-        className={styles.introTitle}
-        initial={{ opacity: 0, y: 48, scale: 0.96, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-        transition={{ duration: reduceMotion ? 0.22 : 0.78, ease: SHARP_EASE }}
-      >
-        <span>NOW / IN MOTION</span>
-        <strong>MAKING THINGS MOVE</strong>
-      </motion.h2>
-
-      <motion.div
-        className={styles.introCapsule}
-        initial={{ opacity: 0, scaleX: 0.08, filter: 'blur(14px)' }}
-        animate={
-          reduceMotion
-            ? { opacity: 1, scaleX: 1, filter: 'blur(0px)' }
-            : { opacity: [0, 1, 1], scaleX: [0.08, 1.04, 1], filter: ['blur(14px)', 'blur(0px)', 'blur(0px)'] }
-        }
-        transition={{ duration: reduceMotion ? 0.2 : 0.7, delay: reduceMotion ? 0.05 : 0.22, ease: CUT_EASE }}
-      >
-        <span className={styles.capsuleNoise} />
-      </motion.div>
-
-      <div className={styles.introFooter}>
-        <span><i /> COMPRESSING INTRO<br />TRANSITIONING TO PORTFOLIO</span>
-        <span><b>→</b> PLAYING REEL<br />NEXT CUT IN MOTION</span>
-      </div>
-    </MotionFrame>
   );
 }
 
@@ -704,8 +640,7 @@ export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps
     cut === 'legitils' ? <LegitilsChapter reduceMotion={reduceMotion} /> :
     cut === 'proxy' ? <ProxyChapter reduceMotion={reduceMotion} /> :
     cut === 'minecraft' ? <MinecraftChapter reduceMotion={reduceMotion} /> :
-    cut === 'hensyoku' ? <HensyokuMateChapter reduceMotion={reduceMotion} /> :
-    <MotionIntro reduceMotion={reduceMotion} />;
+    <HensyokuMateChapter reduceMotion={reduceMotion} />;
 
   return (
     <MotionConfig reducedMotion="user">

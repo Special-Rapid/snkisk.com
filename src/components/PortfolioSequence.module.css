@@ -21,28 +21,12 @@
   will-change: transform, opacity;
 }
 
-.cutTransition[data-kind='slats'] {
-  background: #1744ed;
-}
-
-.transitionSlats {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr 0.9fr;
-  width: 100%;
-  height: 100%;
-}
-
-.transitionSlat,
 .transitionTile {
   display: block;
   width: 100%;
   height: 130%;
   transform-origin: center;
 }
-
-.transitionSlatCyan { background: linear-gradient(155deg, #12e6f3, #155fff); }
-.transitionSlatViolet { background: linear-gradient(155deg, #5b23ff, #d50fce); }
-.transitionSlatOrange { background: linear-gradient(155deg, #ff237d, #ff8b13); }
 
 .cutTransition[data-kind='capsule'] {
   display: grid;
@@ -201,52 +185,10 @@
   padding: clamp(1.6rem, 4vw, 4.3rem);
 }
 
-.playbackMark {
-  position: absolute;
-  z-index: 12;
-  right: clamp(1.1rem, 2vw, 2rem);
-  bottom: clamp(1.1rem, 2vw, 2rem);
-  color: rgba(255, 255, 255, 0.8);
-  font-family: 'Instrument Sans', sans-serif;
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-}
-
-/* The opening already has its own lower-third copy, so a second global cut counter would collide with it. */
-.playbackMark[data-cut='transition'] {
-  display: none;
-}
-
 .frame::selection {
   background: rgba(255, 255, 255, 0.35);
 }
 
-.motionIntro {
-  align-items: center;
-  background:
-    radial-gradient(circle at 17% 24%, rgba(61, 239, 255, 0.9), transparent 28%),
-    radial-gradient(circle at 85% 78%, rgba(255, 107, 35, 0.92), transparent 27%),
-    linear-gradient(120deg, #00cae9 0%, #1745ee 42%, #8c08e8 70%, #ff1594 82%, #ff721d 100%);
-  color: #ffffff;
-  background-size: 135% 135%;
-  animation: intro-world-drift 14s ease-in-out infinite alternate;
-}
-
-.introRay {
-  position: absolute;
-  inset: 47% -8% auto;
-  height: 23rem;
-  transform: rotate(-13deg);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.19), transparent);
-  filter: blur(28px);
-  opacity: 0.48;
-  animation: ray-drift 8s ease-in-out infinite alternate;
-}
-
-.introMetaTop,
-.introChapter,
-.introFooter,
 .timecode,
 .flagFooter,
 .proxyMeta,
@@ -260,60 +202,6 @@
   text-transform: uppercase;
 }
 
-.introMetaTop {
-  position: absolute;
-  top: clamp(1.6rem, 4vw, 4.3rem);
-  left: clamp(1.6rem, 4vw, 4.3rem);
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-.orbitDot {
-  width: 2.4rem;
-  aspect-ratio: 1;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-}
-
-.orbitDot::after {
-  content: '';
-  display: block;
-  width: 0.28rem;
-  aspect-ratio: 1;
-  margin: 0.6rem;
-  border-radius: inherit;
-  background: currentColor;
-}
-
-.introRule {
-  position: absolute;
-  top: clamp(2.7rem, 5.8vw, 5.2rem);
-  left: 18.5%;
-  right: 25%;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.78);
-}
-
-.introRule::after {
-  content: '';
-  position: absolute;
-  top: -0.18rem;
-  right: 0;
-  width: 0.36rem;
-  aspect-ratio: 1;
-  border-radius: 999px;
-  background: #ffffff;
-}
-
-.introChapter {
-  position: absolute;
-  top: clamp(1.8rem, 4vw, 4.3rem);
-  right: clamp(1.6rem, 4vw, 4.3rem);
-  text-align: left;
-}
-
-.introTitle,
 .linkTitle,
 .flagTitle,
 .proxyTitle {
@@ -325,83 +213,6 @@
   letter-spacing: 0;
   line-height: 0.76;
   text-transform: uppercase;
-}
-
-.introTitle {
-  display: grid;
-  align-self: start;
-  width: 100%;
-  margin-top: clamp(10rem, 21vh, 15rem);
-  font-size: clamp(3.8rem, 8.8vw, 10rem);
-  line-height: 0.86;
-  row-gap: 0.34em;
-  text-align: center;
-}
-
-.introTitle strong {
-  color: #090b24;
-  font: inherit;
-}
-
-.introCapsule {
-  position: absolute;
-  z-index: 4;
-  top: 72%;
-  left: 10%;
-  width: 80%;
-  height: clamp(2.5rem, 4.8vw, 4.2rem);
-  overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.9);
-  border-radius: 999px;
-  background:
-    linear-gradient(100deg, #021bd4 0%, #068cff 24%, #e800a7 55%, #ff4e25 76%, #ff941a 100%);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12), 0 0 36px rgba(47, 240, 255, 0.82);
-}
-
-.capsuleNoise {
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(90deg, transparent 0 1.1rem, rgba(255, 255, 255, 0.3) 1.18rem 1.33rem, transparent 1.43rem 2.2rem),
-    radial-gradient(ellipse at 22% 50%, rgba(255, 255, 255, 0.48), transparent 24%);
-  mix-blend-mode: screen;
-  opacity: 0.7;
-  animation: capsule-shift 1.8s linear infinite;
-}
-
-.introFooter {
-  position: absolute;
-  right: clamp(1.6rem, 4vw, 4.3rem);
-  bottom: clamp(1.8rem, 3vw, 3rem);
-  left: clamp(1.6rem, 4vw, 4.3rem);
-  display: flex;
-  justify-content: space-between;
-}
-
-.introFooter span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.58rem;
-}
-
-.introFooter i,
-.introFooter b {
-  display: inline-grid;
-  width: 2.25rem;
-  aspect-ratio: 1;
-  place-items: center;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-size: 1.1rem;
-  font-style: normal;
-}
-
-.introFooter i::after {
-  content: '';
-  width: 0.42rem;
-  aspect-ratio: 1;
-  border-radius: 999px;
-  background: currentColor;
 }
 
 .linkChapter {
@@ -1413,15 +1224,6 @@
 
 @media (max-width: 760px) {
   .frame { min-height: 100svh; padding: 1.25rem; }
-  .motionIntro { min-height: 100svh; }
-  .introTitle { margin-top: 23vh; font-size: clamp(2.3rem, 9.2vw, 3.3rem); line-height: 0.86; row-gap: 0.34em; }
-  .introCapsule { top: 64%; left: 5%; width: 90%; }
-  .introRule { top: 5rem; left: 51%; right: 1.5rem; }
-  .introChapter { top: 1.3rem; right: 1.3rem; font-size: 0.56rem; }
-  .introMetaTop { top: 1.3rem; left: 1.3rem; font-size: 0.56rem; }
-  .orbitDot { width: 2rem; }
-  .introFooter { right: 1.25rem; bottom: 1.25rem; left: 1.25rem; gap: 1rem; font-size: 0.53rem; }
-  .introFooter b, .introFooter i { width: 1.8rem; }
   .linkChapter { min-height: 100svh; }
   .linkTitle { align-self: start; width: 78%; padding-top: 4.7rem; font-size: clamp(4.2rem, 17vw, 5.9rem); line-height: 0.88; }
   .routeStage { top: 49%; right: 1%; width: 96vw; height: 40%; }
@@ -1480,8 +1282,6 @@
   .minecraftFooter { right: 1.25rem; bottom: 1.25rem; left: 1.25rem; font-size: 0.66rem; }
   .minecraftFooter span { display: none; }
   .minecraftFooter strong { margin-left: auto; font-size: 1.38rem; }
-  .playbackMark[data-cut='minecraft'] { top: 1.35rem; right: 1.25rem; bottom: auto; color: rgba(6, 23, 56, 0.76); }
-  .playbackMark[data-cut='hensyoku'] { top: 1.35rem; right: 1.25rem; bottom: auto; color: rgba(80, 57, 47, 0.68); }
   .hensyokuChapter { min-height: 100svh; }
   .hensyokuKicker { top: 1.3rem; left: 1.25rem; display: grid; gap: 0.45rem; font-size: 0.62rem; }
   .hensyokuKicker span { display: none; }
@@ -1501,13 +1301,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .capsuleNoise,
   .flagNoise { opacity: 0.16; }
 
-  .capsuleNoise,
   .flagTraces,
-  .motionIntro,
-  .introRay,
   .linkChapter,
   .linkTopBand,
   .linkBottomBands,
