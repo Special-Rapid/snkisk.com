@@ -1,7 +1,7 @@
 .home {
   position: relative;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   width: 100%;
   min-height: 100svh;
   padding: clamp(1.25rem, 3.4vw, 3.2rem);
@@ -26,8 +26,7 @@
     radial-gradient(circle at 25% 86%, rgba(24, 245, 244, 0.24), transparent 28%);
 }
 
-.header,
-.footer {
+.header {
   position: relative;
   z-index: 2;
   display: flex;
@@ -47,8 +46,7 @@
   text-transform: lowercase;
 }
 
-.status,
-.footer {
+.status {
   font-size: clamp(0.6rem, 0.78vw, 0.78rem);
 }
 
@@ -143,11 +141,6 @@
   font-weight: 800;
 }
 
-.footer {
-  padding-top: clamp(0.55rem, 1.15vw, 0.9rem);
-  color: rgba(255, 255, 255, 0.85);
-}
-
 @media (max-width: 760px) {
   .home { padding: 1.25rem; }
   .status { display: none; }
@@ -156,7 +149,6 @@
   .projectGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 2rem; }
   .project { min-height: 6.3rem; grid-template-columns: auto 1fr; }
   .projectArrow { display: none; }
-  .footer { font-size: 0.54rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

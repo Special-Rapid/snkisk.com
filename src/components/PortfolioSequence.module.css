@@ -12,6 +12,52 @@
   will-change: transform, opacity, clip-path;
 }
 
+.cutTrailField {
+  position: absolute;
+  /* The field sits inside each frame: above its color planes, below copy and UI. */
+  z-index: 1;
+  inset: -14%;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.68;
+  mix-blend-mode: screen;
+  transform: rotate(var(--cut-trail-angle, -10deg)) scale(1.16);
+  transform-origin: center;
+}
+
+.cutTrailField[data-cut='links'] { --cut-trail-angle: -10deg; mix-blend-mode: multiply; opacity: 0.42; }
+.cutTrailField[data-cut='legitils'] { --cut-trail-angle: -6deg; }
+.cutTrailField[data-cut='proxy'] { --cut-trail-angle: -14deg; }
+.cutTrailField[data-cut='minecraft'] { --cut-trail-angle: 7deg; }
+.cutTrailField[data-cut='hensyoku'] { --cut-trail-angle: -13deg; mix-blend-mode: multiply; opacity: 0.48; }
+
+.cutTrail {
+  position: absolute;
+  top: var(--cut-trail-lane);
+  right: -18rem;
+  display: block;
+  width: var(--cut-trail-length);
+  height: clamp(1px, 0.16vw, 2px);
+  border-radius: 999px;
+  background: var(--cut-trail-color);
+  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--cut-trail-color) 82%, transparent);
+  opacity: 0;
+  filter: blur(var(--cut-trail-blur));
+  will-change: transform, opacity, filter;
+  animation: cut-trail-pass var(--cut-trail-duration) var(--cut-trail-delay) cubic-bezier(0.18, 0.81, 0.24, 1) infinite both;
+}
+
+@keyframes cut-trail-pass {
+  0% { transform: translateX(0) scaleX(0.16); opacity: 0; filter: blur(1.15rem); }
+  16% { opacity: var(--cut-trail-opacity); filter: blur(var(--cut-trail-blur)); }
+  76% { opacity: calc(var(--cut-trail-opacity) * 0.72); }
+  100% { transform: translateX(-146vw) scaleX(1.7); opacity: 0; filter: blur(0.94rem); }
+}
+
+.cutTrailField[data-reduced-motion='true'] {
+  display: none;
+}
+
 .cutTransition {
   position: absolute;
   z-index: 20;
@@ -858,6 +904,7 @@
 .proxyRoute {
   position: absolute;
   z-index: 4;
+  isolation: isolate;
   right: clamp(1.6rem, 7vw, 8rem);
   bottom: 18%;
   display: grid;

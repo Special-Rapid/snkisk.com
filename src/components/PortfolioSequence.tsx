@@ -243,6 +243,48 @@ const OPENING_WIPE_PARTICLES = Array.from({ length: 48 }, (_, index) => ({
   tone: index % 6 === 0 ? 'cyan' : index % 5 === 0 ? 'warm' : 'white',
 }));
 
+const CUT_TRAIL_PALETTES: Record<ShowreelCutId, readonly [string, string, string]> = {
+  links: ['#ffffff', '#20ddff', '#f308a0'],
+  legitils: ['#ffffff', '#ffd04a', '#ff3c6e'],
+  proxy: ['#ffffff', '#a850ff', '#ff7418'],
+  minecraft: ['#ffffff', '#d9f600', '#00d6ff'],
+  hensyoku: ['#fff7ea', '#f29a55', '#f05c5c'],
+};
+
+const CUT_TRAIL_PARTICLES = Array.from({ length: 64 }, (_, index) => ({
+  id: `cut-trail-${index}`,
+  lane: (index * 23) % 112 - 6,
+  length: 3.5 + (index % 7) * 1.8,
+  delay: (index % 13) * 0.18,
+  duration: 1.2 + (index % 5) * 0.21,
+  opacity: index % 4 === 0 ? 0.78 : index % 3 === 0 ? 0.56 : 1,
+  blur: index % 4 === 0 ? '0.9rem' : index % 3 === 0 ? '0.58rem' : '0.22rem',
+}));
+
+function CutTrailField({ cut, reduceMotion }: { cut: ShowreelCutId; reduceMotion: boolean }) {
+  const palette = CUT_TRAIL_PALETTES[cut];
+
+  return (
+    <div className={styles.cutTrailField} data-cut={cut} data-reduced-motion={reduceMotion || undefined} aria-hidden="true">
+      {CUT_TRAIL_PARTICLES.map((trail, index) => (
+        <i
+          className={styles.cutTrail}
+          key={trail.id}
+          style={{
+            '--cut-trail-lane': `${trail.lane}%`,
+            '--cut-trail-length': `${trail.length}rem`,
+            '--cut-trail-delay': `${trail.delay}s`,
+            '--cut-trail-duration': `${trail.duration}s`,
+            '--cut-trail-opacity': trail.opacity,
+            '--cut-trail-blur': trail.blur,
+            '--cut-trail-color': palette[index % palette.length],
+          } as CSSProperties}
+        />
+      ))}
+    </div>
+  );
+}
+
 function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
   return (
     <div
@@ -371,10 +413,11 @@ function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
   );
 }
 
-function MotionFrame({ className, children, label }: MotionFrameProps) {
+function MotionFrame({ className, children, label, cut, reduceMotion }: MotionFrameProps & { cut: ShowreelCutId; reduceMotion: boolean }) {
   return (
     <section className={className} aria-label={label}>
       {children}
+      <CutTrailField cut={cut} reduceMotion={reduceMotion} />
     </section>
   );
 }
@@ -383,7 +426,7 @@ function LinkChapter({ reduceMotion, opening }: { reduceMotion: boolean; opening
   const titleDelay = opening && !reduceMotion ? 0.7 : 0;
 
   return (
-    <MotionFrame className={`${styles.frame} ${styles.linkChapter}`} label="go.snkisk.com link service">
+    <MotionFrame className={`${styles.frame} ${styles.linkChapter}`} label="go.snkisk.com link service" cut="links" reduceMotion={reduceMotion}>
       <div className={styles.linkTopBand} />
       <div className={styles.linkBottomBands} />
       <div className={styles.linkDecorLine} />
@@ -479,7 +522,7 @@ function FlagChatDemo({ reduceMotion }: { reduceMotion: boolean }) {
 
 function LegitilsChapter({ reduceMotion }: { reduceMotion: boolean }) {
   return (
-    <MotionFrame className={`${styles.frame} ${styles.legitilsChapter}`} label="MirrorProxy Legitils notification demo">
+    <MotionFrame className={`${styles.frame} ${styles.legitilsChapter}`} label="MirrorProxy Legitils notification demo" cut="legitils" reduceMotion={reduceMotion}>
       <div className={styles.flagNoise} />
       <div className={styles.flagDisc} />
       <div className={styles.flagTraces} />
@@ -507,7 +550,7 @@ function ProxyChapter({ reduceMotion }: { reduceMotion: boolean }) {
   const routeStyle = { '--delay': '0.1s' } as CSSProperties;
 
   return (
-    <MotionFrame className={`${styles.frame} ${styles.proxyChapter}`} label="MirrorProxy project in progress">
+    <MotionFrame className={`${styles.frame} ${styles.proxyChapter}`} label="MirrorProxy project in progress" cut="proxy" reduceMotion={reduceMotion}>
       <div className={styles.proxyBand} />
       <div className={styles.proxyCorner} />
       <BrandLockup />
@@ -588,7 +631,7 @@ function MinecraftBlockQueue({ reduceMotion }: { reduceMotion: boolean }) {
 
 function MinecraftChapter({ reduceMotion }: { reduceMotion: boolean }) {
   return (
-    <MotionFrame className={`${styles.frame} ${styles.minecraftChapter}`} label="mc.snkisk.com Minecraft production">
+    <MotionFrame className={`${styles.frame} ${styles.minecraftChapter}`} label="mc.snkisk.com Minecraft production" cut="minecraft" reduceMotion={reduceMotion}>
       <div className={styles.minecraftOrangeSlope} />
       <div className={styles.minecraftLimeSlope} />
       <div className={styles.minecraftGrid} />
@@ -630,7 +673,7 @@ function HensyokuMateChapter({ reduceMotion }: { reduceMotion: boolean }) {
   const screen = useHensyokuScreen(reduceMotion);
 
   return (
-    <MotionFrame className={`${styles.frame} ${styles.hensyokuChapter}`} label="偏食メイト product demo">
+    <MotionFrame className={`${styles.frame} ${styles.hensyokuChapter}`} label="偏食メイト product demo" cut="hensyoku" reduceMotion={reduceMotion}>
       <div className={styles.hensyokuSun} />
       <div className={styles.hensyokuWave} />
       <div className={styles.hensyokuDots} />

@@ -49,6 +49,8 @@ export default function PortfolioHome() {
             className={styles.project}
             key={code}
             href={href}
+            target="_blank"
+            rel="noreferrer"
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 34, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: reduceMotion ? 0.16 : 0.46, delay: reduceMotion ? index * 0.04 : 0.48 + index * 0.09, ease: [0.18, 0.89, 0.32, 1] }}
@@ -62,16 +64,6 @@ export default function PortfolioHome() {
           </motion.a>
         ))}
       </section>
-
-      <motion.footer
-        className={styles.footer}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduceMotion ? 0.18 : 0.48, delay: reduceMotion ? 0.12 : 0.96 }}
-      >
-        <span>PORTFOLIO / STAY IN MOTION</span>
-        <span>snkisk.com</span>
-      </motion.footer>
     </main>
   );
 }
