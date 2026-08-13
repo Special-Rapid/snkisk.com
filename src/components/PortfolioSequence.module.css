@@ -51,6 +51,7 @@
 }
 
 .openingWipeBand {
+  overflow: visible;
   box-shadow: 0 0 0.2rem rgba(255, 255, 255, 0.52), 0 0 2.4rem rgba(24, 107, 255, 0.36);
   animation: opening-band-sweep 1.08s calc(0.12s + var(--opening-index) * 0.055s) cubic-bezier(0.18, 0.89, 0.32, 1.08) both;
 }
@@ -59,6 +60,55 @@
 .openingWipeViolet { top: 25%; background: #6122f7; }
 .openingWipePink { top: 49%; background: #ed0793; }
 .openingWipeOrange { top: 73%; background: #ff780c; }
+
+.openingWipeTrail {
+  position: absolute;
+  inset: -0.35rem -6vw;
+  display: block;
+  border-top: clamp(0.1rem, 0.28vw, 0.24rem) solid rgba(255, 255, 255, 0.86);
+  border-bottom: 1px solid rgba(119, 246, 255, 0.72);
+  box-shadow: 0 -0.45rem 1.15rem rgba(255, 255, 255, 0.38), 0 0.45rem 1.15rem rgba(87, 223, 255, 0.52);
+  opacity: 0;
+  filter: blur(0.2px);
+  animation: opening-band-trail 0.78s calc(0.18s + var(--opening-index) * 0.06s) cubic-bezier(0.12, 0.78, 0.2, 1) both;
+}
+
+.openingWipeParticles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform: rotate(-10deg) scale(1.18);
+  transform-origin: center;
+}
+
+.openingWipeParticle {
+  position: absolute;
+  top: var(--particle-lane);
+  right: -12rem;
+  display: block;
+  width: var(--particle-length);
+  height: clamp(1px, 0.14vw, 2px);
+  border-radius: 999px;
+  opacity: 0;
+  filter: blur(0.7px);
+  will-change: transform, opacity, filter;
+  animation: opening-particle-streak var(--particle-duration) var(--particle-delay) cubic-bezier(0.15, 0.84, 0.24, 1) both;
+}
+
+.openingWipeParticleWhite {
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 0 0.6rem rgba(255, 255, 255, 0.75);
+}
+
+.openingWipeParticleCyan {
+  background: #70fbff;
+  box-shadow: 0 0 0.8rem rgba(35, 229, 255, 0.9);
+}
+
+.openingWipeParticleWarm {
+  background: #ffcf44;
+  box-shadow: 0 0 0.75rem rgba(255, 180, 38, 0.85);
+}
 
 .openingWipeFlash {
   top: 45%;
@@ -84,6 +134,18 @@
   100% { transform: translate(-112vw, -18vh) rotate(-10deg); opacity: 0; }
 }
 
+@keyframes opening-band-trail {
+  0% { transform: translateX(18vw) scaleX(0.35); opacity: 0; filter: blur(1rem); }
+  34% { transform: translateX(0) scaleX(1.04); opacity: 0.95; filter: blur(0.08rem); }
+  100% { transform: translateX(-80vw) scaleX(1.28); opacity: 0; filter: blur(0.55rem); }
+}
+
+@keyframes opening-particle-streak {
+  0% { transform: translate(0, 0) scaleX(0.25); opacity: 0; filter: blur(1.15rem); }
+  24% { opacity: 0.92; filter: blur(0.15rem); }
+  100% { transform: translate(-130vw, -9vh) scaleX(1.45); opacity: 0; filter: blur(0.9rem); }
+}
+
 @keyframes opening-flash {
   0% { transform: scaleX(0); opacity: 0; }
   42% { transform: scaleX(1.12); opacity: 1; }
@@ -96,9 +158,14 @@
 
 .openingWipe[data-reduced-motion='true'] .openingWipeField,
 .openingWipe[data-reduced-motion='true'] .openingWipeBand,
-.openingWipe[data-reduced-motion='true'] .openingWipeFlash {
+.openingWipe[data-reduced-motion='true'] .openingWipeFlash,
+.openingWipe[data-reduced-motion='true'] .openingWipeTrail {
   animation-duration: 0.2s;
   animation-delay: 0s;
+}
+
+.openingWipe[data-reduced-motion='true'] .openingWipeParticles {
+  display: none;
 }
 
 .transitionTile {

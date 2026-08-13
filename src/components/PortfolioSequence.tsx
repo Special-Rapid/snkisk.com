@@ -233,6 +233,15 @@ type CutTransitionProps = {
   reduceMotion: boolean;
 };
 
+const OPENING_WIPE_PARTICLES = Array.from({ length: 22 }, (_, index) => ({
+  id: `opening-particle-${index}`,
+  lane: (index * 17) % 108 - 12,
+  length: 3 + (index % 5) * 2.5,
+  delay: 0.05 + (index % 8) * 0.075,
+  duration: 0.28 + (index % 4) * 0.055,
+  tone: index % 6 === 0 ? 'cyan' : index % 5 === 0 ? 'warm' : 'white',
+}));
+
 function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
   return (
     <div
@@ -243,12 +252,25 @@ function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
       {/* Open with the same color band language that remains at the bottom of the first frame. */}
       <div className={styles.openingWipeField}>
         {[styles.openingWipeBlue, styles.openingWipeViolet, styles.openingWipePink, styles.openingWipeOrange].map((className, index) => (
-          <i
-            className={`${styles.openingWipeBand} ${className}`}
-            key={className}
-            style={{ '--opening-index': index } as CSSProperties}
-          />
+          <i className={`${styles.openingWipeBand} ${className}`} key={className} style={{ '--opening-index': index } as CSSProperties}>
+            {/* Edge trails make the color bands feel like they cut through the frame, rather than simply cover it. */}
+            <i className={styles.openingWipeTrail} />
+          </i>
         ))}
+        <div className={styles.openingWipeParticles}>
+          {OPENING_WIPE_PARTICLES.map((particle) => (
+            <i
+              className={`${styles.openingWipeParticle} ${styles[`openingWipeParticle${particle.tone[0].toUpperCase()}${particle.tone.slice(1)}`]}`}
+              key={particle.id}
+              style={{
+                '--particle-lane': `${particle.lane}%`,
+                '--particle-length': `${particle.length}rem`,
+                '--particle-delay': `${particle.delay}s`,
+                '--particle-duration': `${particle.duration}s`,
+              } as CSSProperties}
+            />
+          ))}
+        </div>
         <i className={styles.openingWipeFlash} />
       </div>
     </div>
