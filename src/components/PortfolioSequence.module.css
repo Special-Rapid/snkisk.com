@@ -90,7 +90,7 @@
   height: clamp(1px, 0.14vw, 2px);
   border-radius: 999px;
   opacity: 0;
-  filter: blur(0.7px);
+  filter: blur(var(--particle-blur));
   will-change: transform, opacity, filter;
   animation: opening-particle-streak var(--particle-duration) var(--particle-delay) cubic-bezier(0.15, 0.84, 0.24, 1) both;
 }
@@ -143,9 +143,9 @@
 }
 
 @keyframes opening-particle-streak {
-  0% { transform: translate(0, 0) scaleX(0.25); opacity: 0; filter: blur(1.15rem); }
-  24% { opacity: 0.92; filter: blur(0.15rem); }
-  100% { transform: translate(-130vw, -9vh) scaleX(1.45); opacity: 0; filter: blur(0.9rem); }
+  0% { transform: translate(0, 0) scaleX(0.16); opacity: 0; filter: blur(1.15rem); }
+  24% { opacity: var(--particle-opacity); filter: blur(var(--particle-blur)); }
+  100% { transform: translate(-135vw, -9vh) scaleX(var(--particle-scale)); opacity: 0; filter: blur(0.9rem); }
 }
 
 @keyframes opening-flash {

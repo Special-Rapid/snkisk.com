@@ -233,12 +233,13 @@ type CutTransitionProps = {
   reduceMotion: boolean;
 };
 
-const OPENING_WIPE_PARTICLES = Array.from({ length: 22 }, (_, index) => ({
+const OPENING_WIPE_PARTICLES = Array.from({ length: 48 }, (_, index) => ({
   id: `opening-particle-${index}`,
-  lane: (index * 17) % 108 - 12,
-  length: 3 + (index % 5) * 2.5,
-  delay: 0.05 + (index % 8) * 0.075,
-  duration: 0.28 + (index % 4) * 0.055,
+  lane: (index * 19) % 114 - 14,
+  length: 2.4 + (index % 7) * 1.9,
+  delay: 0.02 + (index % 12) * 0.047,
+  duration: 0.22 + (index % 6) * 0.045,
+  intensity: index % 4 === 0 ? 'long' : index % 3 === 0 ? 'soft' : 'sharp',
   tone: index % 6 === 0 ? 'cyan' : index % 5 === 0 ? 'warm' : 'white',
 }));
 
@@ -267,6 +268,9 @@ function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
                 '--particle-length': `${particle.length}rem`,
                 '--particle-delay': `${particle.delay}s`,
                 '--particle-duration': `${particle.duration}s`,
+                '--particle-opacity': particle.intensity === 'long' ? 0.68 : particle.intensity === 'soft' ? 0.5 : 0.92,
+                '--particle-blur': particle.intensity === 'long' ? '0.85rem' : particle.intensity === 'soft' ? '0.52rem' : '0.24rem',
+                '--particle-scale': particle.intensity === 'long' ? 2.1 : particle.intensity === 'soft' ? 1.6 : 1.2,
               } as CSSProperties}
             />
           ))}
