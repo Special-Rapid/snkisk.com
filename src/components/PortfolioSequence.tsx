@@ -18,14 +18,14 @@ const SHOWREEL_CUTS = [
 ] as const;
 
 type ShowreelCutId = (typeof SHOWREEL_CUTS)[number]['id'];
-type TransitionKind = 'capsule' | 'brand' | 'iris' | 'minecraft-break' | 'tiles';
+type TransitionKind = 'capsule' | 'brand' | 'iris' | 'minecraft-break' | 'hensyoku-circle';
 
 const CUT_TRANSITIONS: Record<ShowreelCutId, TransitionKind> = {
   links: 'capsule',
   legitils: 'brand',
   proxy: 'iris',
   minecraft: 'minecraft-break',
-  hensyoku: 'tiles',
+  hensyoku: 'hensyoku-circle',
 };
 
 const BRAND_MARK_OFFSETS = [
@@ -40,6 +40,15 @@ const MINECRAFT_BREAK_VECTORS = [
   { x: -108, y: -18, rotate: -24 }, { x: 102, y: -14, rotate: 26 }, { x: -92, y: 64, rotate: 20 },
   { x: -26, y: 94, rotate: -12 }, { x: 74, y: 80, rotate: 18 }, { x: 124, y: 54, rotate: 30 },
 ];
+
+const HENSYOKU_RADIAL_TRAILS = Array.from({ length: 40 }, (_, index) => ({
+  id: `hensyoku-radial-${index}`,
+  angle: index * 23 + (index % 4) * 7,
+  length: 10 + (index % 6) * 4.5,
+  thickness: index % 5 === 0 ? 2.8 : index % 3 === 0 ? 1.8 : 1,
+  delay: 0.1 + (index % 8) * 0.028,
+  hue: index % 5,
+}));
 
 type CutFrameMotion = {
   initial: TargetAndTransition;
@@ -325,7 +334,9 @@ function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
 
 function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
   const kind = CUT_TRANSITIONS[cut];
-  const transition = { duration: reduceMotion ? 0.01 : 0.98, times: [0, 0.48, 1], ease: CUT_EASE };
+  const isHensyokuCircle = kind === 'hensyoku-circle';
+  const transition = { duration: reduceMotion ? 0.01 : isHensyokuCircle ? 1.16 : 0.98, times: [0, 0.48, 1], ease: CUT_EASE };
+  const circleOverlayTransition = { duration: reduceMotion ? 0.36 : 1.16, times: reduceMotion ? [0, 0.84, 1] : undefined, ease: CUT_EASE };
 
   return (
     <motion.div
@@ -334,8 +345,10 @@ function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
       data-kind={kind}
       aria-hidden="true"
       initial={{ opacity: 1 }}
-      animate={reduceMotion ? { opacity: 0 } : { opacity: [1, 1, 0] }}
-      transition={transition}
+      animate={isHensyokuCircle
+        ? { opacity: reduceMotion ? [1, 1, 0] : [1, 1, 1, 0] }
+        : reduceMotion ? { opacity: 0 } : { opacity: [1, 1, 0] }}
+      transition={isHensyokuCircle ? circleOverlayTransition : transition}
     >
       {kind === 'capsule' ? (
         <motion.div
@@ -396,17 +409,42 @@ function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
         </div>
       ) : null}
 
-      {kind === 'tiles' ? (
-        <div className={styles.transitionTiles}>
-          {[styles.transitionTileCream, styles.transitionTilePeach, styles.transitionTileCoral].map((className, index) => (
-            <motion.i
-              className={`${styles.transitionTile} ${className}`}
-              key={className}
-              initial={{ x: '110%' }}
-              animate={{ x: ['110%', '0%', index === 1 ? '-112%' : '112%'] }}
-              transition={{ duration: reduceMotion ? 0.01 : 0.96, times: [0, 0.42, 1], delay: index * 0.05, ease: CUT_EASE }}
-            />
-          ))}
+      {kind === 'hensyoku-circle' ? (
+        <div className={styles.hensyokuCircleStage} data-reduced-motion={reduceMotion || undefined}>
+          {/* The circle owns the reveal: its clipped inner field creates the trails instead of placing them over the whole frame. */}
+          <motion.div
+            className={styles.hensyokuCircleFill}
+            initial={{ scale: 0.04, opacity: 1 }}
+            animate={{
+              // 5.4 times the vmax-based disc exceeds the viewport diagonal before the release begins.
+              scale: reduceMotion ? [0.04, 5.4, 0.02] : [0.04, 5.4, 5.4, 0.02],
+              opacity: reduceMotion ? [1, 1, 0] : [1, 1, 1, 0],
+            }}
+            transition={{ duration: reduceMotion ? 0.34 : 1.14, times: reduceMotion ? [0, 0.58, 1] : [0, 0.34, 0.62, 1], ease: CUT_EASE }}
+          >
+            <div className={styles.hensyokuRadialTrailField}>
+              {HENSYOKU_RADIAL_TRAILS.map((trail) => (
+                <i
+                  className={styles.hensyokuRadialTrail}
+                  key={trail.id}
+                  style={{
+                    '--hensyoku-trail-angle': `${trail.angle}deg`,
+                    '--hensyoku-trail-length': `${trail.length}vmax`,
+                    '--hensyoku-trail-thickness': `${trail.thickness}px`,
+                  } as CSSProperties}
+                >
+                  <motion.b
+                    className={styles[`hensyokuRadialTrailTone${trail.hue}`]}
+                    initial={{ scaleX: 0.04, opacity: 0, filter: 'blur(0.8rem)' }}
+                    animate={reduceMotion
+                      ? { opacity: 0 }
+                      : { scaleX: [0.04, 1.08, 1.72], opacity: [0, 0.94, 0], filter: ['blur(0.8rem)', 'blur(0.08rem)', 'blur(0.48rem)'] }}
+                    transition={{ duration: 0.56, delay: trail.delay, times: [0, 0.46, 1], ease: SHARP_EASE }}
+                  />
+                </i>
+              ))}
+            </div>
+          </motion.div>
         </div>
       ) : null}
     </motion.div>
