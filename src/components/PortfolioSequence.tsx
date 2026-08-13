@@ -252,48 +252,6 @@ const OPENING_WIPE_PARTICLES = Array.from({ length: 48 }, (_, index) => ({
   tone: index % 6 === 0 ? 'cyan' : index % 5 === 0 ? 'warm' : 'white',
 }));
 
-const CUT_TRAIL_PALETTES: Record<ShowreelCutId, readonly [string, string, string]> = {
-  links: ['#ffffff', '#20ddff', '#f308a0'],
-  legitils: ['#ffffff', '#ffd04a', '#ff3c6e'],
-  proxy: ['#ffffff', '#a850ff', '#ff7418'],
-  minecraft: ['#ffffff', '#d9f600', '#00d6ff'],
-  hensyoku: ['#fff7ea', '#f29a55', '#f05c5c'],
-};
-
-const CUT_TRAIL_PARTICLES = Array.from({ length: 64 }, (_, index) => ({
-  id: `cut-trail-${index}`,
-  lane: (index * 23) % 112 - 6,
-  length: 3.5 + (index % 7) * 1.8,
-  delay: (index % 13) * 0.18,
-  duration: 1.2 + (index % 5) * 0.21,
-  opacity: index % 4 === 0 ? 0.78 : index % 3 === 0 ? 0.56 : 1,
-  blur: index % 4 === 0 ? '0.9rem' : index % 3 === 0 ? '0.58rem' : '0.22rem',
-}));
-
-function CutTrailField({ cut, reduceMotion }: { cut: ShowreelCutId; reduceMotion: boolean }) {
-  const palette = CUT_TRAIL_PALETTES[cut];
-
-  return (
-    <div className={styles.cutTrailField} data-cut={cut} data-reduced-motion={reduceMotion || undefined} aria-hidden="true">
-      {CUT_TRAIL_PARTICLES.map((trail, index) => (
-        <i
-          className={styles.cutTrail}
-          key={trail.id}
-          style={{
-            '--cut-trail-lane': `${trail.lane}%`,
-            '--cut-trail-length': `${trail.length}rem`,
-            '--cut-trail-delay': `${trail.delay}s`,
-            '--cut-trail-duration': `${trail.duration}s`,
-            '--cut-trail-opacity': trail.opacity,
-            '--cut-trail-blur': trail.blur,
-            '--cut-trail-color': palette[index % palette.length],
-          } as CSSProperties}
-        />
-      ))}
-    </div>
-  );
-}
-
 function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
   return (
     <div
@@ -335,8 +293,7 @@ function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
 function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
   const kind = CUT_TRANSITIONS[cut];
   const isHensyokuCircle = kind === 'hensyoku-circle';
-  const transition = { duration: reduceMotion ? 0.01 : isHensyokuCircle ? 1.16 : 0.98, times: [0, 0.48, 1], ease: CUT_EASE };
-  const circleOverlayTransition = { duration: reduceMotion ? 0.36 : 1.16, times: reduceMotion ? [0, 0.84, 1] : undefined, ease: CUT_EASE };
+  const transition = { duration: reduceMotion ? 0.01 : 0.98, times: [0, 0.48, 1], ease: CUT_EASE };
 
   return (
     <motion.div
@@ -344,11 +301,9 @@ function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
       data-cut={cut}
       data-kind={kind}
       aria-hidden="true"
-      initial={{ opacity: 1 }}
-      animate={isHensyokuCircle
-        ? { opacity: reduceMotion ? [1, 1, 0] : [1, 1, 1, 0] }
-        : reduceMotion ? { opacity: 0 } : { opacity: [1, 1, 0] }}
-      transition={isHensyokuCircle ? circleOverlayTransition : transition}
+      initial={isHensyokuCircle ? false : { opacity: 1 }}
+      animate={isHensyokuCircle ? undefined : reduceMotion ? { opacity: 0 } : { opacity: [1, 1, 0] }}
+      transition={transition}
     >
       {kind === 'capsule' ? (
         <motion.div
@@ -411,16 +366,9 @@ function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
 
       {kind === 'hensyoku-circle' ? (
         <div className={styles.hensyokuCircleStage} data-reduced-motion={reduceMotion || undefined}>
-          {/* The circle owns the reveal: its clipped inner field creates the trails instead of placing them over the whole frame. */}
-          <motion.div
+          {/* Only this incoming cut owns trails: the clipped circle contains every radial streak. */}
+          <div
             className={styles.hensyokuCircleFill}
-            initial={{ scale: 0.04, opacity: 1 }}
-            animate={{
-              // 5.4 times the vmax-based disc exceeds the viewport diagonal before the release begins.
-              scale: reduceMotion ? [0.04, 5.4, 0.02] : [0.04, 5.4, 5.4, 0.02],
-              opacity: reduceMotion ? [1, 1, 0] : [1, 1, 1, 0],
-            }}
-            transition={{ duration: reduceMotion ? 0.34 : 1.14, times: reduceMotion ? [0, 0.58, 1] : [0, 0.34, 0.62, 1], ease: CUT_EASE }}
           >
             <div className={styles.hensyokuRadialTrailField}>
               {HENSYOKU_RADIAL_TRAILS.map((trail) => (
@@ -433,29 +381,24 @@ function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
                     '--hensyoku-trail-thickness': `${trail.thickness}px`,
                   } as CSSProperties}
                 >
-                  <motion.b
+                  <b
                     className={styles[`hensyokuRadialTrailTone${trail.hue}`]}
-                    initial={{ scaleX: 0.04, opacity: 0, filter: 'blur(0.8rem)' }}
-                    animate={reduceMotion
-                      ? { opacity: 0 }
-                      : { scaleX: [0.04, 1.08, 1.72], opacity: [0, 0.94, 0], filter: ['blur(0.8rem)', 'blur(0.08rem)', 'blur(0.48rem)'] }}
-                    transition={{ duration: 0.56, delay: trail.delay, times: [0, 0.46, 1], ease: SHARP_EASE }}
+                    style={{ '--hensyoku-trail-delay': `${trail.delay + 0.16}s` } as CSSProperties}
                   />
                 </i>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       ) : null}
     </motion.div>
   );
 }
 
-function MotionFrame({ className, children, label, cut, reduceMotion }: MotionFrameProps & { cut: ShowreelCutId; reduceMotion: boolean }) {
+function MotionFrame({ className, children, label }: MotionFrameProps) {
   return (
     <section className={className} aria-label={label}>
       {children}
-      <CutTrailField cut={cut} reduceMotion={reduceMotion} />
     </section>
   );
 }
@@ -464,7 +407,7 @@ function LinkChapter({ reduceMotion, opening }: { reduceMotion: boolean; opening
   const titleDelay = opening && !reduceMotion ? 0.7 : 0;
 
   return (
-    <MotionFrame className={`${styles.frame} ${styles.linkChapter}`} label="go.snkisk.com link service" cut="links" reduceMotion={reduceMotion}>
+    <MotionFrame className={`${styles.frame} ${styles.linkChapter}`} label="go.snkisk.com link service">
       <div className={styles.linkTopBand} />
       <div className={styles.linkBottomBands} />
       <div className={styles.linkDecorLine} />
@@ -560,7 +503,7 @@ function FlagChatDemo({ reduceMotion }: { reduceMotion: boolean }) {
 
 function LegitilsChapter({ reduceMotion }: { reduceMotion: boolean }) {
   return (
-    <MotionFrame className={`${styles.frame} ${styles.legitilsChapter}`} label="MirrorProxy Legitils notification demo" cut="legitils" reduceMotion={reduceMotion}>
+    <MotionFrame className={`${styles.frame} ${styles.legitilsChapter}`} label="MirrorProxy Legitils notification demo">
       <div className={styles.flagNoise} />
       <div className={styles.flagDisc} />
       <div className={styles.flagTraces} />
@@ -588,7 +531,7 @@ function ProxyChapter({ reduceMotion }: { reduceMotion: boolean }) {
   const routeStyle = { '--delay': '0.1s' } as CSSProperties;
 
   return (
-    <MotionFrame className={`${styles.frame} ${styles.proxyChapter}`} label="MirrorProxy project in progress" cut="proxy" reduceMotion={reduceMotion}>
+    <MotionFrame className={`${styles.frame} ${styles.proxyChapter}`} label="MirrorProxy project in progress">
       <div className={styles.proxyBand} />
       <div className={styles.proxyCorner} />
       <BrandLockup />
@@ -669,7 +612,7 @@ function MinecraftBlockQueue({ reduceMotion }: { reduceMotion: boolean }) {
 
 function MinecraftChapter({ reduceMotion }: { reduceMotion: boolean }) {
   return (
-    <MotionFrame className={`${styles.frame} ${styles.minecraftChapter}`} label="mc.snkisk.com Minecraft production" cut="minecraft" reduceMotion={reduceMotion}>
+    <MotionFrame className={`${styles.frame} ${styles.minecraftChapter}`} label="mc.snkisk.com Minecraft production">
       <div className={styles.minecraftOrangeSlope} />
       <div className={styles.minecraftLimeSlope} />
       <div className={styles.minecraftGrid} />
@@ -711,7 +654,7 @@ function HensyokuMateChapter({ reduceMotion }: { reduceMotion: boolean }) {
   const screen = useHensyokuScreen(reduceMotion);
 
   return (
-    <MotionFrame className={`${styles.frame} ${styles.hensyokuChapter}`} label="偏食メイト product demo" cut="hensyoku" reduceMotion={reduceMotion}>
+    <MotionFrame className={`${styles.frame} ${styles.hensyokuChapter}`} label="偏食メイト product demo">
       <div className={styles.hensyokuSun} />
       <div className={styles.hensyokuWave} />
       <div className={styles.hensyokuDots} />

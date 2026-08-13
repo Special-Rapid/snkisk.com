@@ -12,52 +12,6 @@
   will-change: transform, opacity, clip-path;
 }
 
-.cutTrailField {
-  position: absolute;
-  /* The field sits inside each frame: above its color planes, below copy and UI. */
-  z-index: 1;
-  inset: -14%;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0.68;
-  mix-blend-mode: screen;
-  transform: rotate(var(--cut-trail-angle, -10deg)) scale(1.16);
-  transform-origin: center;
-}
-
-.cutTrailField[data-cut='links'] { --cut-trail-angle: -10deg; mix-blend-mode: multiply; opacity: 0.42; }
-.cutTrailField[data-cut='legitils'] { --cut-trail-angle: -6deg; }
-.cutTrailField[data-cut='proxy'] { --cut-trail-angle: -14deg; }
-.cutTrailField[data-cut='minecraft'] { --cut-trail-angle: 7deg; }
-.cutTrailField[data-cut='hensyoku'] { --cut-trail-angle: -13deg; mix-blend-mode: multiply; opacity: 0.48; }
-
-.cutTrail {
-  position: absolute;
-  top: var(--cut-trail-lane);
-  right: -18rem;
-  display: block;
-  width: var(--cut-trail-length);
-  height: clamp(1px, 0.16vw, 2px);
-  border-radius: 999px;
-  background: var(--cut-trail-color);
-  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--cut-trail-color) 82%, transparent);
-  opacity: 0;
-  filter: blur(var(--cut-trail-blur));
-  will-change: transform, opacity, filter;
-  animation: cut-trail-pass var(--cut-trail-duration) var(--cut-trail-delay) cubic-bezier(0.18, 0.81, 0.24, 1) infinite both;
-}
-
-@keyframes cut-trail-pass {
-  0% { transform: translateX(0) scaleX(0.16); opacity: 0; filter: blur(1.15rem); }
-  16% { opacity: var(--cut-trail-opacity); filter: blur(var(--cut-trail-blur)); }
-  76% { opacity: calc(var(--cut-trail-opacity) * 0.72); }
-  100% { transform: translateX(-146vw) scaleX(1.7); opacity: 0; filter: blur(0.94rem); }
-}
-
-.cutTrailField[data-reduced-motion='true'] {
-  display: none;
-}
-
 .cutTransition {
   position: absolute;
   z-index: 20;
@@ -348,6 +302,7 @@
 
 .cutTransition[data-kind='hensyoku-circle'] {
   background: transparent;
+  animation: hensyoku-transition-fade 3.2s both;
 }
 
 .hensyokuCircleStage {
@@ -376,6 +331,9 @@
     radial-gradient(circle at 66% 72%, #ef7258 0, transparent 40%),
     linear-gradient(135deg, #fff3df 0%, #ffbd83 45%, #eb754e 100%);
   box-shadow: 0 0 3rem rgba(232, 113, 75, 0.48), 0 0 7rem rgba(255, 191, 136, 0.56);
+  scale: 0.04;
+  opacity: 1;
+  animation: hensyoku-circle-reveal 3.2s cubic-bezier(0.18, 0.89, 0.32, 1.08) both;
 }
 
 .hensyokuRadialTrailField {
@@ -402,6 +360,25 @@
   border-radius: 999px;
   transform-origin: left center;
   will-change: transform, opacity, filter;
+  opacity: 0;
+  animation: hensyoku-radial-trail 0.96s var(--hensyoku-trail-delay) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes hensyoku-transition-fade {
+  0%, 90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes hensyoku-circle-reveal {
+  0% { scale: 0.04; opacity: 1; }
+  39%, 72% { scale: 5.6; opacity: 1; }
+  100% { scale: 0.02; opacity: 0; }
+}
+
+@keyframes hensyoku-radial-trail {
+  0% { transform: scaleX(0.04); opacity: 0; filter: blur(0.8rem); }
+  46% { transform: scaleX(1.08); opacity: 0.94; filter: blur(0.08rem); }
+  100% { transform: scaleX(1.72); opacity: 0; filter: blur(0.48rem); }
 }
 
 .hensyokuRadialTrailTone0 { background: rgba(255, 250, 239, 0.94); box-shadow: 0 0 0.65rem rgba(255, 250, 239, 0.9); }
@@ -412,6 +389,20 @@
 
 .hensyokuCircleStage[data-reduced-motion='true'] .hensyokuCircleFill {
   box-shadow: none;
+  animation: hensyoku-circle-reveal-reduced 0.36s ease-out both;
+}
+
+.hensyokuCircleStage[data-reduced-motion='true'] .hensyokuRadialTrailField {
+  display: none;
+}
+
+.cutTransition[data-kind='hensyoku-circle']:has(.hensyokuCircleStage[data-reduced-motion='true']) {
+  animation-duration: 0.36s;
+}
+
+@keyframes hensyoku-circle-reveal-reduced {
+  0%, 68% { scale: 0.04; opacity: 1; }
+  100% { scale: 5.6; opacity: 0; }
 }
 
 .frame {
