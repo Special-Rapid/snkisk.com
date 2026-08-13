@@ -7,7 +7,7 @@
 
 .stage {
   position: relative;
-  background: #ffffff;
+  background: linear-gradient(130deg, #075cf2 0%, #5620ee 39%, #e70691 68%, #ff780c 100%);
 }
 
 .frame {

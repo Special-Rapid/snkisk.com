@@ -88,7 +88,8 @@ export default function App() {
           <motion.div
             className={styles.frame}
             key="project-showreel"
-            initial={{ opacity: 0, scale: 1.12, y: 72 }}
+            // The opening wipe must own frame zero; avoid a blank page before its color bands appear.
+            initial={{ opacity: 1, scale: 1.08, y: 0 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7, ease: [0.18, 0.89, 0.32, 1.08] }}

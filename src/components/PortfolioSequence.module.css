@@ -21,6 +21,86 @@
   will-change: transform, opacity;
 }
 
+.openingWipe {
+  position: absolute;
+  z-index: 32;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  animation: opening-wipe-fade 1.35s both;
+}
+
+.openingWipeField {
+  position: absolute;
+  inset: -18%;
+  overflow: hidden;
+  background: linear-gradient(130deg, #075cf2 0%, #5620ee 39%, #e70691 68%, #ff780c 100%);
+  will-change: clip-path;
+  animation: opening-field-open 1.35s cubic-bezier(0.18, 0.89, 0.32, 1.08) both;
+}
+
+.openingWipeBand,
+.openingWipeFlash {
+  position: absolute;
+  display: block;
+  width: 148vw;
+  height: 34vh;
+  left: -22vw;
+  transform-origin: right center;
+  will-change: transform, opacity;
+}
+
+.openingWipeBand {
+  box-shadow: 0 0 0.2rem rgba(255, 255, 255, 0.52), 0 0 2.4rem rgba(24, 107, 255, 0.36);
+  animation: opening-band-sweep 1.08s calc(0.12s + var(--opening-index) * 0.055s) cubic-bezier(0.18, 0.89, 0.32, 1.08) both;
+}
+
+.openingWipeBlue { top: 1%; background: #075ff2; }
+.openingWipeViolet { top: 25%; background: #6122f7; }
+.openingWipePink { top: 49%; background: #ed0793; }
+.openingWipeOrange { top: 73%; background: #ff780c; }
+
+.openingWipeFlash {
+  top: 45%;
+  height: clamp(0.5rem, 1vw, 1rem);
+  background: #ffffff;
+  box-shadow: 0 0 1.8rem #ffffff, 0 0 4rem rgba(16, 225, 247, 0.85);
+  animation: opening-flash 0.72s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes opening-wipe-fade {
+  0%, 77% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes opening-field-open {
+  0%, 54% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  100% { clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); }
+}
+
+@keyframes opening-band-sweep {
+  0% { transform: translate(22vw, 8vh) rotate(-10deg); opacity: 1; }
+  36% { transform: translate(0, 0) rotate(-10deg); opacity: 1; }
+  100% { transform: translate(-112vw, -18vh) rotate(-10deg); opacity: 0; }
+}
+
+@keyframes opening-flash {
+  0% { transform: scaleX(0); opacity: 0; }
+  42% { transform: scaleX(1.12); opacity: 1; }
+  100% { transform: scaleX(1.12); opacity: 0; }
+}
+
+.openingWipe[data-reduced-motion='true'] {
+  animation-duration: 0.2s;
+}
+
+.openingWipe[data-reduced-motion='true'] .openingWipeField,
+.openingWipe[data-reduced-motion='true'] .openingWipeBand,
+.openingWipe[data-reduced-motion='true'] .openingWipeFlash {
+  animation-duration: 0.2s;
+  animation-delay: 0s;
+}
+
 .transitionTile {
   display: block;
   width: 100%;
@@ -279,6 +359,11 @@
   display: block;
   margin-top: 0.16em;
   color: #40138b;
+}
+
+.linkTitleFirst {
+  margin-top: 0 !important;
+  color: #0959e8 !important;
 }
 
 @media (min-width: 761px) {

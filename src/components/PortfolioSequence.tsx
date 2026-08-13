@@ -233,6 +233,28 @@ type CutTransitionProps = {
   reduceMotion: boolean;
 };
 
+function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
+  return (
+    <div
+      className={styles.openingWipe}
+      aria-hidden="true"
+      data-reduced-motion={reduceMotion || undefined}
+    >
+      {/* Open with the same color band language that remains at the bottom of the first frame. */}
+      <div className={styles.openingWipeField}>
+        {[styles.openingWipeBlue, styles.openingWipeViolet, styles.openingWipePink, styles.openingWipeOrange].map((className, index) => (
+          <i
+            className={`${styles.openingWipeBand} ${className}`}
+            key={className}
+            style={{ '--opening-index': index } as CSSProperties}
+          />
+        ))}
+        <i className={styles.openingWipeFlash} />
+      </div>
+    </div>
+  );
+}
+
 function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
   const kind = CUT_TRANSITIONS[cut];
   const transition = { duration: reduceMotion ? 0.01 : 0.98, times: [0, 0.48, 1], ease: CUT_EASE };
@@ -331,21 +353,31 @@ function MotionFrame({ className, children, label }: MotionFrameProps) {
   );
 }
 
-function LinkChapter({ reduceMotion }: { reduceMotion: boolean }) {
+function LinkChapter({ reduceMotion, opening }: { reduceMotion: boolean; opening: boolean }) {
+  const titleDelay = opening && !reduceMotion ? 0.7 : 0;
+
   return (
     <MotionFrame className={`${styles.frame} ${styles.linkChapter}`} label="go.snkisk.com link service">
       <div className={styles.linkTopBand} />
       <div className={styles.linkBottomBands} />
       <div className={styles.linkDecorLine} />
-      <motion.h2
-        className={styles.linkTitle}
-        initial={{ opacity: 0, x: -80, scale: 0.97, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, x: 0, scale: 1, filter: 'blur(0px)' }}
-        transition={{ duration: reduceMotion ? 0.22 : 0.72, ease: SHARP_EASE }}
-      >
-        ONE LINK
-        <span>/ MANY WAYS</span>
-      </motion.h2>
+      <h2 className={styles.linkTitle}>
+        <motion.span
+          className={styles.linkTitleFirst}
+          initial={{ opacity: 0, x: -80, scale: 0.97, clipPath: 'inset(0 100% 0 0)', filter: 'blur(10px)' }}
+          animate={{ opacity: 1, x: 0, scale: 1, clipPath: 'inset(0 0% 0 0)', filter: 'blur(0px)' }}
+          transition={{ duration: reduceMotion ? 0.22 : 0.48, delay: titleDelay, ease: SHARP_EASE }}
+        >
+          ONE LINK
+        </motion.span>
+        <motion.span
+          initial={{ opacity: 0, x: -56, scale: 0.98, clipPath: 'inset(0 100% 0 0)', filter: 'blur(8px)' }}
+          animate={{ opacity: 1, x: 0, scale: 1, clipPath: 'inset(0 0% 0 0)', filter: 'blur(0px)' }}
+          transition={{ duration: reduceMotion ? 0.22 : 0.52, delay: titleDelay + (reduceMotion ? 0.04 : 0.18), ease: SHARP_EASE }}
+        >
+          / MANY WAYS
+        </motion.span>
+      </h2>
 
       <div className={styles.routeStage}>
         {/* The route label is the single source; the lines visibly branch into separate destinations. */}
@@ -354,7 +386,7 @@ function LinkChapter({ reduceMotion }: { reduceMotion: boolean }) {
           className={styles.routeLabel}
           initial={{ opacity: 0, scale: 0.72, filter: 'blur(12px)' }}
           animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.46, delay: reduceMotion ? 0.04 : 0.32, ease: CUT_EASE }}
+          transition={{ duration: reduceMotion ? 0.18 : 0.46, delay: reduceMotion ? 0.04 : titleDelay + 0.46, ease: CUT_EASE }}
         >
           go.snkisk.com
         </motion.a>
@@ -362,19 +394,19 @@ function LinkChapter({ reduceMotion }: { reduceMotion: boolean }) {
           className={`${styles.routeLine} ${styles.routeLineLime}`}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.54, delay: reduceMotion ? 0.06 : 0.4, ease: SHARP_EASE }}
+          transition={{ duration: reduceMotion ? 0.18 : 0.54, delay: reduceMotion ? 0.06 : titleDelay + 0.54, ease: SHARP_EASE }}
         />
         <motion.span
           className={`${styles.routeLine} ${styles.routeLineBlue}`}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.56, delay: reduceMotion ? 0.08 : 0.46, ease: SHARP_EASE }}
+          transition={{ duration: reduceMotion ? 0.18 : 0.56, delay: reduceMotion ? 0.08 : titleDelay + 0.6, ease: SHARP_EASE }}
         />
         <motion.span
           className={`${styles.routeLine} ${styles.routeLinePink}`}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.58, delay: reduceMotion ? 0.1 : 0.52, ease: SHARP_EASE }}
+          transition={{ duration: reduceMotion ? 0.18 : 0.58, delay: reduceMotion ? 0.1 : titleDelay + 0.66, ease: SHARP_EASE }}
         />
         <span className={`${styles.routeNode} ${styles.routeNodeLime}`} />
         <span className={`${styles.routeNode} ${styles.routeNodeBlue}`} />
@@ -636,7 +668,7 @@ export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps
   const cutFrameMotion = CUT_FRAME_MOTIONS[cut];
 
   const activeCut =
-    cut === 'links' ? <LinkChapter reduceMotion={reduceMotion} /> :
+    cut === 'links' ? <LinkChapter reduceMotion={reduceMotion} opening /> :
     cut === 'legitils' ? <LegitilsChapter reduceMotion={reduceMotion} /> :
     cut === 'proxy' ? <ProxyChapter reduceMotion={reduceMotion} /> :
     cut === 'minecraft' ? <MinecraftChapter reduceMotion={reduceMotion} /> :
@@ -658,6 +690,7 @@ export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps
             {activeCut}
           </motion.div>
         </AnimatePresence>
+        <OpeningDiagonalWipe reduceMotion={reduceMotion} />
         <CutTransition key={`transition-${cutKey}`} cut={cut} reduceMotion={reduceMotion} />
       </main>
     </MotionConfig>

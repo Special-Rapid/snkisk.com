@@ -26,7 +26,7 @@
 }
 
 html {
-  background: var(--bg-base);
+  background: linear-gradient(130deg, #075cf2 0%, #5620ee 39%, #e70691 68%, #ff780c 100%);
   height: 100%;
   overflow: hidden;
 }
@@ -37,9 +37,8 @@ body {
   min-height: 100svh;
   height: 100%;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.85), transparent 30%),
-    linear-gradient(135deg, #f7f4ef 0%, #f4f8ff 26%, #fff5fb 56%, #fffaf1 100%);
+  /* First paint matches the opening wipe so a slow JavaScript boot never flashes white. */
+  background: linear-gradient(130deg, #075cf2 0%, #5620ee 39%, #e70691 68%, #ff780c 100%);
   color: var(--text-strong);
   font-family: 'Instrument Sans', 'Avenir Next', 'Helvetica Neue', sans-serif;
 }
