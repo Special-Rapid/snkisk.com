@@ -18,37 +18,14 @@ const SHOWREEL_CUTS = [
 ] as const;
 
 type ShowreelCutId = (typeof SHOWREEL_CUTS)[number]['id'];
-type TransitionKind = 'capsule' | 'brand' | 'iris' | 'minecraft-break' | 'hensyoku-circle';
-
-const CUT_TRANSITIONS: Record<ShowreelCutId, TransitionKind> = {
-  links: 'capsule',
-  legitils: 'brand',
-  proxy: 'iris',
-  minecraft: 'minecraft-break',
-  hensyoku: 'hensyoku-circle',
+type IntermediateTransition = {
+  from: ShowreelCutId;
+  to: Exclude<ShowreelCutId, 'links'>;
+  id: string;
 };
 
-const BRAND_MARK_OFFSETS = [
-  { x: -42, y: -38 },
-  { x: 42, y: -38 },
-  { x: -42, y: 38 },
-  { x: 42, y: 38 },
-];
-
-const MINECRAFT_BREAK_VECTORS = [
-  { x: -88, y: -76, rotate: -18 }, { x: -22, y: -96, rotate: 12 }, { x: 76, y: -80, rotate: 22 },
-  { x: -108, y: -18, rotate: -24 }, { x: 102, y: -14, rotate: 26 }, { x: -92, y: 64, rotate: 20 },
-  { x: -26, y: 94, rotate: -12 }, { x: 74, y: 80, rotate: 18 }, { x: 124, y: 54, rotate: 30 },
-];
-
-const HENSYOKU_RADIAL_TRAILS = Array.from({ length: 40 }, (_, index) => ({
-  id: `hensyoku-radial-${index}`,
-  angle: index * 23 + (index % 4) * 7,
-  length: 10 + (index % 6) * 4.5,
-  thickness: index % 5 === 0 ? 2.8 : index % 3 === 0 ? 1.8 : 1,
-  delay: 0.1 + (index % 8) * 0.028,
-  hue: index % 5,
-}));
+const EDITORIAL_SWITCH_MS = 840;
+const EDITORIAL_TRANSITION_MS = 1480;
 
 type CutFrameMotion = {
   initial: TargetAndTransition;
@@ -57,63 +34,55 @@ type CutFrameMotion = {
 };
 
 const CUT_FRAME_MOTIONS: Record<ShowreelCutId, CutFrameMotion> = {
-  links: {
-    initial: { opacity: 0, x: 44, scale: 1.02 },
-    animate: { opacity: 1, x: 0, scale: 1 },
-    exit: { opacity: 0, x: -28, scale: 0.99 },
-  },
-  legitils: {
-    initial: { opacity: 0, x: -36, scale: 1.025 },
-    animate: { opacity: 1, x: 0, scale: 1 },
-    exit: { opacity: 0, x: 28, scale: 0.99 },
-  },
-  proxy: {
-    initial: { opacity: 0, y: 26, scale: 0.94 },
-    animate: { opacity: 1, y: 0, scale: 1 },
-    exit: { opacity: 0, y: -18, scale: 1.03 },
-  },
-  minecraft: {
-    initial: { opacity: 0, x: 54, y: -20, scale: 0.98 },
-    animate: { opacity: 1, x: 0, y: 0, scale: 1 },
-    exit: { opacity: 0, x: -36, y: 16, scale: 1.02 },
-  },
-  hensyoku: {
-    initial: { opacity: 0, x: 42, y: 18, scale: 1.015 },
-    animate: { opacity: 1, x: 0, y: 0, scale: 1 },
-    exit: { opacity: 0, x: -24, y: -18, scale: 0.99 },
-  },
+  links: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
+  legitils: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
+  proxy: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
+  minecraft: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
+  hensyoku: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
 };
 
 function useShowreelCut(reduceMotion: boolean, onComplete: () => void) {
   const [cut, setCut] = useState<ShowreelCutId>('links');
   const [cycle, setCycle] = useState(0);
+  const [transition, setTransition] = useState<IntermediateTransition | null>(null);
 
   useEffect(() => {
-    let cutIndex = 0;
-    let timeoutId = 0;
-
-    // Discrete timing prevents a skipped cut when a background tab drops animation frames.
-    const playCut = () => {
-      const activeCut = SHOWREEL_CUTS[cutIndex];
-      setCut(activeCut.id);
-      setCycle(0);
-
-      const duration = activeCut.endMs - activeCut.startMs;
-      timeoutId = window.setTimeout(() => {
-        if (cutIndex === SHOWREEL_CUTS.length - 1) {
-          onComplete();
-          return;
-        }
-        cutIndex += 1;
-        playCut();
-      }, reduceMotion ? Math.max(1600, duration) : duration);
+    const timeoutIds: number[] = [];
+    const addTimeout = (callback: () => void, delay: number) => {
+      timeoutIds.push(window.setTimeout(callback, delay));
     };
 
-    playCut();
-    return () => window.clearTimeout(timeoutId);
+    const playCut = (cutIndex: number) => {
+      const activeCut = SHOWREEL_CUTS[cutIndex];
+      setCut(activeCut.id);
+      setCycle(cutIndex);
+
+      const duration = activeCut.endMs - activeCut.startMs;
+      if (cutIndex === SHOWREEL_CUTS.length - 1) {
+        addTimeout(onComplete, reduceMotion ? Math.max(1600, duration) : duration);
+        return;
+      }
+
+      const nextCut = SHOWREEL_CUTS[cutIndex + 1].id;
+      const leadMs = reduceMotion ? 150 : EDITORIAL_SWITCH_MS;
+      const transitionMs = reduceMotion ? 260 : EDITORIAL_TRANSITION_MS;
+
+      // Start over the outgoing composition, hit the edit while fully covered, then ease out on the incoming one.
+      addTimeout(() => {
+        setTransition({ from: activeCut.id, to: nextCut as Exclude<ShowreelCutId, 'links'>, id: `${activeCut.id}-${nextCut}-${cutIndex}` });
+        addTimeout(() => setTransition(null), transitionMs);
+      }, Math.max(0, duration - leadMs));
+
+      addTimeout(() => {
+        playCut(cutIndex + 1);
+      }, duration);
+    };
+
+    playCut(0);
+    return () => timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
   }, [onComplete, reduceMotion]);
 
-  return { cut, cycle };
+  return { cut, cycle, transition };
 }
 
 type MotionFrameProps = {
@@ -237,11 +206,6 @@ function BrandLockup() {
   );
 }
 
-type CutTransitionProps = {
-  cut: ShowreelCutId;
-  reduceMotion: boolean;
-};
-
 const OPENING_WIPE_PARTICLES = Array.from({ length: 48 }, (_, index) => ({
   id: `opening-particle-${index}`,
   lane: (index * 19) % 114 - 14,
@@ -290,108 +254,62 @@ function OpeningDiagonalWipe({ reduceMotion }: { reduceMotion: boolean }) {
   );
 }
 
-function CutTransition({ cut, reduceMotion }: CutTransitionProps) {
-  const kind = CUT_TRANSITIONS[cut];
-  const isHensyokuCircle = kind === 'hensyoku-circle';
+function OpeningCapsuleTransition({ reduceMotion }: { reduceMotion: boolean }) {
   const transition = { duration: reduceMotion ? 0.01 : 0.98, times: [0, 0.48, 1], ease: CUT_EASE };
 
   return (
     <motion.div
       className={styles.cutTransition}
-      data-cut={cut}
-      data-kind={kind}
       aria-hidden="true"
-      initial={isHensyokuCircle ? false : { opacity: 1 }}
-      animate={isHensyokuCircle ? undefined : reduceMotion ? { opacity: 0 } : { opacity: [1, 1, 0] }}
+      data-kind="capsule"
+      initial={{ opacity: 1 }}
+      animate={reduceMotion ? { opacity: 0 } : { opacity: [1, 1, 0] }}
       transition={transition}
     >
-      {kind === 'capsule' ? (
-        <motion.div
-          className={styles.transitionCapsule}
-          initial={{ scaleX: 0, scaleY: 0.38 }}
-          animate={{ scaleX: [0, 1.18, 1.18], scaleY: [0.38, 1, 1], opacity: [1, 1, 0] }}
-          transition={transition}
-        />
-      ) : null}
-
-      {kind === 'brand' ? (
-        <div className={styles.brandTransitionStage}>
-          {/* The chapter is introduced as one giant identity frame before it pulls back into its working position. */}
-          <motion.div
-            className={styles.brandTransitionLockup}
-            initial={{ scale: 3.4, x: 0, y: 0 }}
-            animate={{ scale: [3.4, 1.42, 0.64], x: [0, '-16vw', '-36vw'], y: [0, '-10vh', '-34vh'] }}
-            transition={{ duration: reduceMotion ? 0.01 : 1.04, times: [0, 0.52, 1], ease: CUT_EASE }}
-          >
-            <span className={styles.brandTransitionMark}>
-              {BRAND_MARK_OFFSETS.map((offset, index) => (
-                <motion.i
-                  key={`${offset.x}-${offset.y}`}
-                  className={styles[`brandTransitionPiece${index + 1}`]}
-                  initial={{ x: 0, y: 0, scale: 1 }}
-                  animate={{ x: [0, offset.x, offset.x], y: [0, offset.y, offset.y], scale: [1, 0.9, 0.7], opacity: [1, 1, 0] }}
-                  transition={{ duration: reduceMotion ? 0.01 : 0.94, delay: 0.12, times: [0, 0.6, 1], ease: CUT_EASE }}
-                />
-              ))}
-            </span>
-            <span className={styles.brandTransitionText}>
-              <b>Mirror</b><strong>Proxy</strong><i>/</i><em>Legitils</em>
-            </span>
-          </motion.div>
-        </div>
-      ) : null}
-
-      {kind === 'iris' ? (
-        <motion.div
-          className={styles.transitionIris}
-          initial={{ scale: 0.08, opacity: 1 }}
-          animate={{ scale: [0.08, 2.4, 2.9], opacity: [1, 1, 0] }}
-          transition={transition}
-        />
-      ) : null}
-
-      {kind === 'minecraft-break' ? (
-        <div className={styles.minecraftBreakGrid}>
-          {MINECRAFT_BREAK_VECTORS.map((vector, index) => (
-            <motion.i
-              className={styles[`minecraftBreakTile${(index % 6) + 1}`]}
-              key={`${vector.x}-${vector.y}`}
-              initial={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
-              animate={{ opacity: [1, 1, 0], x: [0, 0, `${vector.x}vw`], y: [0, 0, `${vector.y}vh`], rotate: [0, 0, vector.rotate], scale: [1, 1, 0.7] }}
-              transition={{ duration: reduceMotion ? 0.01 : 0.96, delay: (index % 3) * 0.035, times: [0, 0.34, 1], ease: CUT_EASE }}
-            />
-          ))}
-        </div>
-      ) : null}
-
-      {kind === 'hensyoku-circle' ? (
-        <div className={styles.hensyokuCircleStage} data-reduced-motion={reduceMotion || undefined}>
-          {/* Only this incoming cut owns trails: the clipped circle contains every radial streak. */}
-          <div
-            className={styles.hensyokuCircleFill}
-          >
-            <div className={styles.hensyokuRadialTrailField}>
-              {HENSYOKU_RADIAL_TRAILS.map((trail) => (
-                <i
-                  className={styles.hensyokuRadialTrail}
-                  key={trail.id}
-                  style={{
-                    '--hensyoku-trail-angle': `${trail.angle}deg`,
-                    '--hensyoku-trail-length': `${trail.length}vmax`,
-                    '--hensyoku-trail-thickness': `${trail.thickness}px`,
-                  } as CSSProperties}
-                >
-                  <b
-                    className={styles[`hensyokuRadialTrailTone${trail.hue}`]}
-                    style={{ '--hensyoku-trail-delay': `${trail.delay + 0.16}s` } as CSSProperties}
-                  />
-                </i>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <motion.div
+        className={styles.transitionCapsule}
+        initial={{ scaleX: 0, scaleY: 0.38 }}
+        animate={{ scaleX: [0, 1.18, 1.18], scaleY: [0.38, 1, 1], opacity: [1, 1, 0] }}
+        transition={transition}
+      />
     </motion.div>
+  );
+}
+
+function MatchCutTransition({ transition, reduceMotion }: { transition: IntermediateTransition; reduceMotion: boolean }) {
+  const kind = `${transition.from}-${transition.to}`;
+
+  return (
+    <div className={styles.matchTransition} data-kind={kind} data-reduced-motion={reduceMotion || undefined} aria-hidden="true">
+      {kind === 'links-legitils' ? (
+        <div className={styles.signalFlagTransition}>
+          <i className={styles.signalFlagLine} />
+          <i className={styles.signalFlagLineEcho} />
+          <b className={styles.signalFlagWord}>FLAG</b>
+          <span className={styles.signalFlagCorner} />
+        </div>
+      ) : null}
+      {kind === 'legitils-proxy' ? (
+        <div className={styles.markRouteTransition}>
+          <span className={styles.markRoutePieces}>{Array.from({ length: 4 }, (_, index) => <i key={index} />)}</span>
+          <span className={styles.markRouteGrid}>{Array.from({ length: 6 }, (_, index) => <i key={index} />)}</span>
+          <b>ROUTE</b>
+        </div>
+      ) : null}
+      {kind === 'proxy-minecraft' ? (
+        <div className={styles.routeBlockTransition}>
+          <span className={styles.routeBlockRails}>{Array.from({ length: 8 }, (_, index) => <i key={index} />)}</span>
+          <span className={styles.routeBlockTiles}>{Array.from({ length: 12 }, (_, index) => <i key={index} />)}</span>
+        </div>
+      ) : null}
+      {kind === 'minecraft-hensyoku' ? (
+        <div className={styles.blockOrbitTransition}>
+          <span className={styles.blockOrbitTiles}>{Array.from({ length: 16 }, (_, index) => <i key={index} />)}</span>
+          <span className={styles.blockOrbitRing} />
+          <b className={styles.blockOrbitWord}>PALETTE</b>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -713,7 +631,7 @@ type PortfolioSequenceProps = {
 
 export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps) {
   const reduceMotion = Boolean(useReducedMotion());
-  const { cut, cycle } = useShowreelCut(reduceMotion, onComplete);
+  const { cut, cycle, transition } = useShowreelCut(reduceMotion, onComplete);
   const cutKey = `${cycle}-${cut}`;
   const cutFrameMotion = CUT_FRAME_MOTIONS[cut];
 
@@ -727,7 +645,7 @@ export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps
   return (
     <MotionConfig reducedMotion="user">
       <main className={styles.sequence} aria-label="Project showreel">
-        <AnimatePresence initial={false} mode="wait">
+        <AnimatePresence initial={false} mode="sync">
           <motion.div
             className={styles.cut}
             key={cutKey}
@@ -735,13 +653,14 @@ export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps
             initial={reduceMotion ? { opacity: 0 } : cutFrameMotion.initial}
             animate={reduceMotion ? { opacity: 1 } : cutFrameMotion.animate}
             exit={reduceMotion ? { opacity: 0 } : cutFrameMotion.exit}
-            transition={{ duration: reduceMotion ? 0.18 : 0.28, ease: SHARP_EASE }}
+            transition={{ duration: reduceMotion ? 0.18 : 0.01, ease: SHARP_EASE }}
           >
             {activeCut}
           </motion.div>
         </AnimatePresence>
         <OpeningDiagonalWipe reduceMotion={reduceMotion} />
-        <CutTransition key={`transition-${cutKey}`} cut={cut} reduceMotion={reduceMotion} />
+        {cut === 'links' && cycle === 0 ? <OpeningCapsuleTransition reduceMotion={reduceMotion} /> : null}
+        {transition ? <MatchCutTransition key={transition.id} transition={transition} reduceMotion={reduceMotion} /> : null}
       </main>
     </MotionConfig>
   );
