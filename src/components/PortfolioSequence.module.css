@@ -458,6 +458,10 @@
   overflow: clip;
   isolation: isolate;
   padding: clamp(1.6rem, 4vw, 4.3rem);
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
 
 .frame::selection {
@@ -498,7 +502,7 @@
     radial-gradient(circle at 23% 74%, rgba(114, 44, 255, 0.1), transparent 31%),
     #ffffff;
   background-size: 130% 130%;
-  animation: link-world-drift 15s ease-in-out infinite alternate;
+  animation: link-world-drift 15s ease-in-out infinite alternate, link-camera-pass 6.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   color: #0759e8;
 }
 
@@ -517,6 +521,7 @@
   transform: rotate(-14deg);
   background: linear-gradient(90deg, #0bc9e9, #06e8f2);
   animation: top-band-drift 11s ease-in-out infinite alternate;
+  translate: 0 0 -8rem;
 }
 
 .linkBottomBands {
@@ -528,6 +533,7 @@
   background: linear-gradient(98deg, #056cf3 0 34%, #6525fc 34% 58%, #ef0e96 58% 81%, #ff7a0b 81%);
   clip-path: polygon(0 35%, 100% 0, 100% 72%, 0 100%);
   animation: bottom-bands-drift 12s ease-in-out infinite alternate;
+  translate: 0 0 -10rem;
 }
 
 .linkDecorLine {
@@ -548,6 +554,9 @@
   font-size: clamp(4.8rem, 8.8vw, 9rem);
   line-height: 0.84;
   color: #0959e8;
+  translate: 0 0 4rem;
+  transform-origin: left center;
+  animation: link-title-punch 6.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .linkTitle span {
@@ -578,7 +587,9 @@
   right: 5%;
   width: min(48vw, 44rem);
   height: 41%;
-  animation: route-stage-sway 7.4s cubic-bezier(0.42, 0, 0.18, 1) infinite;
+  transform-style: preserve-3d;
+  transform-origin: 72% 52%;
+  animation: route-stage-sway 6.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .routeLabel {
@@ -687,7 +698,7 @@
     linear-gradient(104deg, #ff3006 0%, #f32c0b 58%, #ff6d0d 100%);
   color: #ffffff;
   background-size: 135% 135%;
-  animation: flag-world-drift 12s ease-in-out infinite alternate;
+  animation: flag-world-drift 12s ease-in-out infinite alternate, flag-camera-pass 6.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .flagNoise {
@@ -708,7 +719,8 @@
   border-radius: 999px;
   background: linear-gradient(138deg, #6929ff 0%, #3510b5 100%);
   opacity: 0.92;
-  animation: flag-disc-drift 9s ease-in-out infinite alternate;
+  translate: 0 0 -7rem;
+  animation: flag-disc-drift 9s ease-in-out infinite alternate, flag-disc-push 6.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .flagTraces {
@@ -817,6 +829,9 @@
   font-size: clamp(7.2rem, 14vw, 14rem);
   line-height: 0.8;
   text-align: center;
+  translate: 0 0 5rem;
+  transform-origin: center;
+  animation: flag-title-punch 6.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .flagTitle span {
@@ -855,7 +870,9 @@
   display: grid;
   gap: clamp(0.75rem, 1.5vw, 1.2rem);
   width: min(73vw, 59rem);
-  animation: flag-chat-settle 6.8s cubic-bezier(0.42, 0, 0.18, 1) infinite;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  animation: flag-chat-settle 6.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .flagRow {
@@ -956,7 +973,7 @@
   background: linear-gradient(118deg, #fff0e2 0%, #ffe0bd 35%, #ff53a4 36%, #5f2ae3 68%, #07bdf1 100%);
   color: #090d27;
   background-size: 140% 140%;
-  animation: proxy-world-drift 14s ease-in-out infinite alternate;
+  animation: proxy-world-drift 14s ease-in-out infinite alternate, proxy-camera-pass 7.1s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .proxyBand {
@@ -968,6 +985,7 @@
   border-radius: 0 0 0 45%;
   background: linear-gradient(135deg, #0eabed, #1e4df4 42%, #9826ef 70%, #fd4386);
   animation: proxy-band-drift 10s ease-in-out infinite alternate;
+  translate: 0 0 -9rem;
 }
 
 .proxyCorner {
@@ -987,6 +1005,9 @@
   align-self: center;
   max-width: 10ch;
   font-size: clamp(5.6rem, 14vw, 13rem);
+  translate: 0 0 3rem;
+  transform-origin: left center;
+  animation: proxy-title-punch 7.1s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .proxyRoute {
@@ -999,7 +1020,9 @@
   grid-template-columns: repeat(3, minmax(6rem, 1fr));
   gap: clamp(0.7rem, 2.2vw, 2rem);
   width: min(56vw, 50rem);
-  animation: proxy-route-sway 7.8s cubic-bezier(0.42, 0, 0.18, 1) infinite;
+  transform-style: preserve-3d;
+  transform-origin: center;
+  animation: proxy-route-sway 7.1s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .proxyNode {
@@ -1057,7 +1080,7 @@
     linear-gradient(128deg, #009ded 0%, #00c5ef 43%, #07ace9 100%);
   color: #061738;
   background-size: 125% 125%;
-  animation: minecraft-world-drift 10s ease-in-out infinite alternate;
+  animation: minecraft-world-drift 10s ease-in-out infinite alternate, minecraft-camera-pass 6.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .minecraftOrangeSlope,
@@ -1078,6 +1101,7 @@
   background: linear-gradient(95deg, #ff7911 0%, #ff570d 58%, #ff3210 100%);
   clip-path: polygon(0 39%, 100% 100%, 0 100%);
   animation: minecraft-orange-sweep 7.8s ease-in-out infinite alternate;
+  translate: 0 0 -8rem;
 }
 
 .minecraftLimeSlope {
@@ -1089,6 +1113,7 @@
   background: linear-gradient(118deg, #beec00, #dff500 58%, #99d800);
   clip-path: polygon(0 100%, 100% 18%, 100% 100%);
   animation: minecraft-lime-sweep 8.4s ease-in-out infinite alternate;
+  translate: 0 0 -6rem;
 }
 
 .minecraftGrid {
@@ -1206,6 +1231,9 @@
   line-height: 0.72;
   text-transform: uppercase;
   white-space: normal;
+  translate: 0 0 4rem;
+  transform-origin: left center;
+  animation: minecraft-title-punch 6.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .minecraftTitle span,
@@ -1246,7 +1274,9 @@
   width: min(54vw, 48rem);
   min-height: clamp(5.3rem, 11vw, 9.7rem);
   overflow: clip;
-  animation: block-stage-lift 5.8s cubic-bezier(0.42, 0, 0.18, 1) infinite;
+  transform-style: preserve-3d;
+  transform-origin: right bottom;
+  animation: block-stage-lift 6.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .minecraftBlock {
@@ -1319,7 +1349,7 @@
     linear-gradient(112deg, #fff8f2 0%, #fff6ed 48%, #f9e8da 100%);
   color: #513b31;
   background-size: 125% 125%;
-  animation: hensyoku-world-drift 12s ease-in-out infinite alternate;
+  animation: hensyoku-world-drift 12s ease-in-out infinite alternate, hensyoku-camera-pass 7.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .hensyokuSun,
@@ -1348,6 +1378,7 @@
   clip-path: polygon(0 62%, 100% 0, 100% 100%, 0 100%);
   opacity: 0.94;
   animation: hensyoku-wave-drift 8.2s ease-in-out infinite alternate;
+  translate: 0 0 -8rem;
 }
 
 .hensyokuDots {
@@ -1414,6 +1445,9 @@
   font-weight: 800;
   letter-spacing: -0.08em;
   line-height: 0.98;
+  translate: 0 0 3rem;
+  transform-origin: left center;
+  animation: hensyoku-title-punch 7.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .hensyokuTitle span,
@@ -1455,7 +1489,9 @@
   border-radius: clamp(1.8rem, 3.2vw, 3.2rem);
   background: #fff8f2;
   box-shadow: 0 1.6rem 4rem rgba(115, 66, 38, 0.18), 0 0 0 1px rgba(104, 61, 38, 0.12);
-  animation: hensyoku-phone-float 6.8s cubic-bezier(0.42, 0, 0.18, 1) infinite;
+  transform-style: preserve-3d;
+  transform-origin: 56% 62%;
+  animation: hensyoku-phone-float 7.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .hensyokuScreen {
@@ -1483,7 +1519,8 @@
   background: rgba(255, 248, 242, 0.88);
   box-shadow: 0 0.9rem 2.2rem rgba(119, 66, 39, 0.12);
   color: #d7773d;
-  animation: hensyoku-metric-breathe 4.6s cubic-bezier(0.42, 0, 0.18, 1) infinite;
+  transform-origin: right bottom;
+  animation: hensyoku-metric-breathe 7.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .hensyokuMetric b {
@@ -1622,12 +1659,23 @@
   .proxyNode,
   .proxyConnectorOne,
   .proxyConnectorTwo,
+  .linkChapter,
+  .legitilsChapter,
+  .proxyChapter,
+  .minecraftChapter,
+  .hensyokuChapter,
+  .linkTitle,
   .routeStage,
   .routeLabel,
+  .flagDisc,
+  .flagTitle,
   .flagChat,
   .flagRow,
+  .proxyTitle,
   .proxyRoute,
+  .minecraftTitle,
   .minecraftBlockStage,
+  .hensyokuTitle,
   .hensyokuPhone,
   .hensyokuMetric { animation: none; }
 }
@@ -1708,14 +1756,31 @@
 }
 
 @keyframes route-stage-sway {
-  0%, 100% { translate: 0 1%; rotate: -0.6deg; }
-  48% { translate: 1.3% -1.4%; rotate: 0.45deg; }
-  62% { translate: 1% -1%; rotate: 0.2deg; }
+  0%, 11%, 100% { translate: 0 1% 8rem; rotate: -1.4deg; scale: 1; }
+  16% { translate: -5% 4% 6rem; rotate: -4deg; scale: 0.92; }
+  24% { translate: 6% -5% 15rem; rotate: 4.5deg; scale: 1.16; }
+  34% { translate: 2% -1.5% 10rem; rotate: 1deg; scale: 1.04; }
+}
+
+@keyframes link-camera-pass {
+  0%, 10%, 100% { transform: scale(1.025) rotateX(0deg) rotateY(0deg); }
+  16% { transform: scale(1.01) rotateX(1.4deg) rotateY(-2.6deg); }
+  25% { transform: scale(1.075) rotateX(-2.2deg) rotateY(3.5deg); }
+  35% { transform: scale(1.045) rotateX(-0.65deg) rotateY(0.9deg); }
+}
+
+@keyframes link-title-punch {
+  0%, 11%, 100% { scale: 1; rotate: 0deg; }
+  16% { scale: 0.93; rotate: -1.2deg; }
+  24% { scale: 1.12; rotate: 1.8deg; }
+  34% { scale: 1.035; rotate: 0.4deg; }
 }
 
 @keyframes route-label-breathe {
-  0%, 100% { scale: 0.985; box-shadow: 0 0 0 6px rgba(121, 246, 247, 0.18), 0 0 18px rgba(3, 211, 236, 0.28); }
-  52% { scale: 1.025; box-shadow: 0 0 0 9px rgba(121, 246, 247, 0.28), 0 0 32px rgba(3, 211, 236, 0.54); }
+  0%, 9%, 100% { translate: 0 0; scale: 1; box-shadow: 0 0 0 6px rgba(121, 246, 247, 0.18), 0 0 18px rgba(3, 211, 236, 0.28); }
+  13% { translate: -0.45rem 0.22rem; scale: 0.96; }
+  19% { translate: 0.72rem -0.3rem; scale: 1.07; box-shadow: 0 0 0 11px rgba(121, 246, 247, 0.32), 0 0 38px rgba(3, 211, 236, 0.64); }
+  25% { translate: 0.28rem -0.12rem; scale: 1.02; }
 }
 
 @keyframes chat-scan {
@@ -1725,15 +1790,38 @@
 }
 
 @keyframes flag-chat-settle {
-  0%, 100% { translate: 0 0; }
-  45% { translate: 0 -0.65rem; }
-  57% { translate: 0 -0.4rem; }
+  0%, 10%, 100% { translate: 0 0 11rem; rotate: 0deg; scale: 1; }
+  15% { translate: -6% 4% 7rem; rotate: -2deg; scale: 0.91; }
+  23% { translate: 5% -3% 18rem; rotate: 2.2deg; scale: 1.12; }
+  32% { translate: 1.5% -0.8% 13rem; rotate: 0.55deg; scale: 1.035; }
+}
+
+@keyframes flag-camera-pass {
+  0%, 10%, 100% { transform: scale(1.025) rotateX(0deg) rotateY(0deg); }
+  15% { transform: scale(1.01) rotateX(-1.5deg) rotateY(2.8deg); }
+  24% { transform: scale(1.08) rotateX(2.3deg) rotateY(-3.7deg); }
+  34% { transform: scale(1.045) rotateX(0.7deg) rotateY(-1deg); }
+}
+
+@keyframes flag-disc-push {
+  0%, 12%, 100% { scale: 1; rotate: 0deg; }
+  18% { scale: 0.9; rotate: -4deg; }
+  25% { scale: 1.18; rotate: 5deg; }
+  34% { scale: 1.05; rotate: 1.2deg; }
+}
+
+@keyframes flag-title-punch {
+  0%, 11%, 100% { scale: 1; rotate: 0deg; }
+  16% { scale: 0.9; rotate: 1deg; }
+  24% { scale: 1.15; rotate: -1.7deg; }
+  34% { scale: 1.04; rotate: -0.35deg; }
 }
 
 @keyframes flag-row-breathe {
-  0%, 100% { translate: 0 0; filter: brightness(0.98); }
-  46% { translate: 0.55rem -0.18rem; filter: brightness(1.1); }
-  62% { translate: 0.34rem -0.1rem; filter: brightness(1.04); }
+  0%, 12%, 100% { translate: 0 0; filter: brightness(0.98); }
+  17% { translate: -1.15rem 0; filter: brightness(0.92); }
+  23% { translate: 0.85rem -0.22rem; filter: brightness(1.22); }
+  29% { translate: 0.24rem -0.08rem; filter: brightness(1.06); }
 }
 
 @keyframes proxy-node-breathe {
@@ -1747,9 +1835,24 @@
 }
 
 @keyframes proxy-route-sway {
-  0%, 100% { translate: 0 0; rotate: 0deg; }
-  48% { translate: -0.75rem -0.65rem; rotate: -0.45deg; }
-  62% { translate: -0.48rem -0.38rem; rotate: -0.2deg; }
+  0%, 10%, 100% { translate: 0 0 9rem; rotate: 0deg; scale: 1; }
+  15% { translate: 5% 6% 5rem; rotate: 3deg; scale: 0.9; }
+  24% { translate: -7% -7% 18rem; rotate: -4.5deg; scale: 1.16; }
+  34% { translate: -2% -2% 12rem; rotate: -1deg; scale: 1.045; }
+}
+
+@keyframes proxy-camera-pass {
+  0%, 11%, 100% { transform: scale(1.025) rotateX(0deg) rotateY(0deg); }
+  16% { transform: scale(1.01) rotateX(1.4deg) rotateY(2.9deg); }
+  25% { transform: scale(1.085) rotateX(-2.1deg) rotateY(-4deg); }
+  35% { transform: scale(1.05) rotateX(-0.6deg) rotateY(-1.1deg); }
+}
+
+@keyframes proxy-title-punch {
+  0%, 12%, 100% { scale: 1; rotate: 0deg; }
+  17% { scale: 0.92; rotate: 1.3deg; }
+  25% { scale: 1.13; rotate: -2deg; }
+  35% { scale: 1.04; rotate: -0.4deg; }
 }
 
 @keyframes minecraft-world-drift {
@@ -1783,9 +1886,24 @@
 }
 
 @keyframes block-stage-lift {
-  0%, 100% { translate: 0 0; }
-  48% { translate: 0 -0.8rem; }
-  61% { translate: 0 -0.52rem; }
+  0%, 10%, 100% { translate: 0 0 9rem; rotate: 0deg; scale: 1; }
+  15% { translate: 5% 7% 5rem; rotate: 3deg; scale: 0.9; }
+  23% { translate: -7% -9% 18rem; rotate: -5deg; scale: 1.17; }
+  33% { translate: -2% -3% 12rem; rotate: -1.1deg; scale: 1.045; }
+}
+
+@keyframes minecraft-camera-pass {
+  0%, 10%, 100% { transform: scale(1.025) rotateX(0deg) rotateY(0deg); }
+  15% { transform: scale(1.01) rotateX(-1.4deg) rotateY(-2.8deg); }
+  23% { transform: scale(1.08) rotateX(2.5deg) rotateY(4.2deg); }
+  33% { transform: scale(1.045) rotateX(0.7deg) rotateY(1.1deg); }
+}
+
+@keyframes minecraft-title-punch {
+  0%, 10%, 100% { scale: 1; rotate: 0deg; }
+  15% { scale: 0.92; rotate: -1.5deg; }
+  23% { scale: 1.13; rotate: 2.1deg; }
+  33% { scale: 1.04; rotate: 0.45deg; }
 }
 
 @keyframes hensyoku-world-drift {
@@ -1809,13 +1927,29 @@
 }
 
 @keyframes hensyoku-phone-float {
-  0%, 100% { translate: 0 0; rotate: -0.35deg; }
-  48% { translate: -0.55rem -1rem; rotate: 0.45deg; }
-  62% { translate: -0.34rem -0.68rem; rotate: 0.24deg; }
+  0%, 11%, 100% { translate: 0 0 9rem; rotate: -2deg; scale: 1; }
+  16% { translate: 7% 6% 5rem; rotate: -6deg; scale: 0.9; }
+  25% { translate: -8% -9% 18rem; rotate: 5deg; scale: 1.16; }
+  35% { translate: -2% -3% 12rem; rotate: 0.8deg; scale: 1.04; }
+}
+
+@keyframes hensyoku-camera-pass {
+  0%, 11%, 100% { transform: scale(1.025) rotateX(0deg) rotateY(0deg); }
+  16% { transform: scale(1.01) rotateX(1.2deg) rotateY(-2.6deg); }
+  25% { transform: scale(1.075) rotateX(-2deg) rotateY(3.8deg); }
+  35% { transform: scale(1.045) rotateX(-0.55deg) rotateY(1deg); }
+}
+
+@keyframes hensyoku-title-punch {
+  0%, 12%, 100% { scale: 1; rotate: 0deg; }
+  17% { scale: 0.93; rotate: -1deg; }
+  25% { scale: 1.11; rotate: 1.5deg; }
+  35% { scale: 1.03; rotate: 0.3deg; }
 }
 
 @keyframes hensyoku-metric-breathe {
-  0%, 100% { scale: 0.97; filter: brightness(0.98); }
-  48% { scale: 1.05; filter: brightness(1.08); }
-  62% { scale: 1.025; filter: brightness(1.03); }
+  0%, 12%, 100% { translate: 0 0; scale: 1; filter: brightness(0.98); }
+  17% { translate: 0.42rem 0.34rem; scale: 0.94; }
+  23% { translate: -0.55rem -0.5rem; scale: 1.09; filter: brightness(1.14); }
+  30% { translate: -0.18rem -0.18rem; scale: 1.02; filter: brightness(1.04); }
 }
