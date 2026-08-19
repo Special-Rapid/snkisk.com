@@ -6,6 +6,17 @@ import styles from './App.module.css';
 
 type Stage = 'reel' | 'closing' | 'home';
 
+const SHORTCUT_DESTINATIONS: Record<string, string> = {
+  '/h': 'https://hensyoku-mate.snkisk.com/',
+  '/mc': 'https://mc.snkisk.com/',
+  '/m': 'https://lmp.snkisk.com/',
+  '/l': 'https://lmp.snkisk.com/',
+  '/g': 'https://go.snkisk.com/',
+  '/hpt': 'https://go.snkisk.com/a',
+  '/hptrf': 'https://forms.gle/rZqAtEQAfm6ojmaY9',
+  '/hf': 'https://hensyoku-mate.snkisk.com/contact/',
+};
+
 type SiteHandoffProps = {
   phase: 'cover' | 'reveal';
   reduceMotion: boolean;
@@ -63,6 +74,7 @@ function SiteHandoff({ phase, reduceMotion, onCovered }: SiteHandoffProps) {
 }
 
 export default function App() {
+  const shortcutDestination = SHORTCUT_DESTINATIONS[window.location.pathname];
   const [stage, setStage] = useState<Stage>('reel');
   const reduceMotion = Boolean(useReducedMotion());
   const showReel = stage === 'reel';
@@ -70,6 +82,16 @@ export default function App() {
   const showHome = stage === 'home';
   const handleReelComplete = useCallback(() => setStage('closing'), []);
   const handleHandoffCovered = useCallback(() => setStage('home'), []);
+
+  useEffect(() => {
+    if (shortcutDestination) {
+      window.location.replace(shortcutDestination);
+    }
+  }, [shortcutDestination]);
+
+  if (shortcutDestination) {
+    return null;
+  }
 
   return (
     <div className={styles.stage}>

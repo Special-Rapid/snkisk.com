@@ -105,17 +105,10 @@ type MinecraftBlock = {
   tone: MinecraftBlockTone;
 };
 
-type HensyokuScreen = {
-  id: 'loading' | 'palette' | 'safe';
-  src: string;
-  alt: string;
+const HENSYOKU_SAFE_SCREEN = {
+  src: 'https://images.snkisk.com/snkisk.com/images/4fc567c0-54f6-438b-9adf-81b3d3f550be.png',
+  alt: '偏食メイトの安全圏画面',
 };
-
-const HENSYOKU_SCREENS: HensyokuScreen[] = [
-  { id: 'loading', src: 'https://images.snkisk.com/snkisk.com/images/5a48566e-62f5-4bd5-ada1-ca04a396d013.png', alt: '偏食メイトの起動画面' },
-  { id: 'palette', src: 'https://images.snkisk.com/snkisk.com/images/1df82acd-14af-41e7-88c7-1cab6b0c2d89.png', alt: '偏食メイトのパレット画面' },
-  { id: 'safe', src: 'https://images.snkisk.com/snkisk.com/images/4fc567c0-54f6-438b-9adf-81b3d3f550be.png', alt: '偏食メイトの安全圏画面' },
-];
 
 const MINECRAFT_BLOCK_TONES: MinecraftBlockTone[] = ['grass', 'deepslate', 'water', 'quartz', 'craft', 'ore'];
 const MINECRAFT_BLOCK_COUNT = 5;
@@ -126,54 +119,6 @@ function getMinecraftBlockTone(id: number): MinecraftBlockTone {
 
 function createMinecraftBlockSet(): MinecraftBlock[] {
   return Array.from({ length: MINECRAFT_BLOCK_COUNT }, (_, id) => ({ id, tone: getMinecraftBlockTone(id) }));
-}
-
-function useMinecraftBlockQueue(reduceMotion: boolean) {
-  const [blocks, setBlocks] = useState<MinecraftBlock[]>(() => (reduceMotion ? createMinecraftBlockSet() : []));
-
-  useEffect(() => {
-    if (reduceMotion) {
-      setBlocks(createMinecraftBlockSet());
-      return;
-    }
-
-    let nextId = 0;
-    const addBlock = () => {
-      setBlocks((current) => {
-        const nextBlock = { id: nextId, tone: getMinecraftBlockTone(nextId) };
-        nextId += 1;
-        return [...current, nextBlock].slice(-MINECRAFT_BLOCK_COUNT);
-      });
-    };
-
-    // The queue builds once, then every arrival advances the connected block chain by one slot.
-    addBlock();
-    const intervalId = window.setInterval(addBlock, 620);
-    return () => window.clearInterval(intervalId);
-  }, [reduceMotion]);
-
-  return blocks;
-}
-
-function useHensyokuScreen(reduceMotion: boolean) {
-  const [screenIndex, setScreenIndex] = useState(reduceMotion ? 2 : 0);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      setScreenIndex(2);
-      return;
-    }
-
-    setScreenIndex(0);
-    const paletteTimeout = window.setTimeout(() => setScreenIndex(1), 760);
-    const safetyTimeout = window.setTimeout(() => setScreenIndex(2), 1680);
-    return () => {
-      window.clearTimeout(paletteTimeout);
-      window.clearTimeout(safetyTimeout);
-    };
-  }, [reduceMotion]);
-
-  return HENSYOKU_SCREENS[screenIndex];
 }
 
 const FLAG_EVENTS: FlagEvent[] = [
@@ -321,61 +266,23 @@ function MotionFrame({ className, children, label }: MotionFrameProps) {
   );
 }
 
-function LinkChapter({ reduceMotion, opening }: { reduceMotion: boolean; opening: boolean }) {
-  const titleDelay = opening && !reduceMotion ? 0.7 : 0;
-
+function LinkChapter() {
   return (
     <MotionFrame className={`${styles.frame} ${styles.linkChapter}`} label="go.snkisk.com link service">
       <div className={styles.linkTopBand} />
       <div className={styles.linkBottomBands} />
       <div className={styles.linkDecorLine} />
       <h2 className={styles.linkTitle}>
-        <motion.span
-          className={styles.linkTitleFirst}
-          initial={{ opacity: 0, x: -80, scale: 0.97, clipPath: 'inset(0 100% 0 0)', filter: 'blur(10px)' }}
-          animate={{ opacity: 1, x: 0, scale: 1, clipPath: 'inset(0 0% 0 0)', filter: 'blur(0px)' }}
-          transition={{ duration: reduceMotion ? 0.22 : 0.48, delay: titleDelay, ease: SHARP_EASE }}
-        >
-          ONE LINK
-        </motion.span>
-        <motion.span
-          initial={{ opacity: 0, x: -56, scale: 0.98, clipPath: 'inset(0 100% 0 0)', filter: 'blur(8px)' }}
-          animate={{ opacity: 1, x: 0, scale: 1, clipPath: 'inset(0 0% 0 0)', filter: 'blur(0px)' }}
-          transition={{ duration: reduceMotion ? 0.22 : 0.52, delay: titleDelay + (reduceMotion ? 0.04 : 0.18), ease: SHARP_EASE }}
-        >
-          / MANY WAYS
-        </motion.span>
+        <span className={styles.linkTitleFirst}>ONE LINK</span>
+        <span>/ MANY WAYS</span>
       </h2>
 
       <div className={styles.routeStage}>
         {/* The route label is the single source; the lines visibly branch into separate destinations. */}
-        <motion.a
-          href="https://go.snkisk.com/"
-          className={styles.routeLabel}
-          initial={{ opacity: 0, scale: 0.72, filter: 'blur(12px)' }}
-          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.46, delay: reduceMotion ? 0.04 : titleDelay + 0.46, ease: CUT_EASE }}
-        >
-          go.snkisk.com
-        </motion.a>
-        <motion.span
-          className={`${styles.routeLine} ${styles.routeLineLime}`}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.54, delay: reduceMotion ? 0.06 : titleDelay + 0.54, ease: SHARP_EASE }}
-        />
-        <motion.span
-          className={`${styles.routeLine} ${styles.routeLineBlue}`}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.56, delay: reduceMotion ? 0.08 : titleDelay + 0.6, ease: SHARP_EASE }}
-        />
-        <motion.span
-          className={`${styles.routeLine} ${styles.routeLinePink}`}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: reduceMotion ? 0.18 : 0.58, delay: reduceMotion ? 0.1 : titleDelay + 0.66, ease: SHARP_EASE }}
-        />
+        <a href="https://go.snkisk.com/" className={styles.routeLabel}>go.snkisk.com</a>
+        <span className={`${styles.routeLine} ${styles.routeLineLime}`} />
+        <span className={`${styles.routeLine} ${styles.routeLineBlue}`} />
+        <span className={`${styles.routeLine} ${styles.routeLinePink}`} />
         <span className={`${styles.routeNode} ${styles.routeNodeLime}`} />
         <span className={`${styles.routeNode} ${styles.routeNodeBlue}`} />
         <span className={`${styles.routeNode} ${styles.routeNodePink}`} />
@@ -385,24 +292,13 @@ function LinkChapter({ reduceMotion, opening }: { reduceMotion: boolean; opening
   );
 }
 
-function FlagChatDemo({ reduceMotion }: { reduceMotion: boolean }) {
+function FlagChatDemo() {
   return (
     <div className={styles.flagChat} aria-label="Animated Legitils flag notification demo">
       {FLAG_EVENTS.map((event, index) => (
-        // Start with an empty alert stack, then let one notification arrive every half second.
-        <motion.div
+        <div
           key={`${event.player}-${event.violation}`}
           className={`${styles.flagRow} ${index === 0 ? styles.flagRowLead : ''}`}
-          initial={{ opacity: 0, x: -1400 }}
-          animate={
-            reduceMotion
-              ? { opacity: 1, x: 0 }
-              : {
-                  opacity: [0, 1, 1, 0.92],
-                  x: [-1400, 28, 0, 0],
-                }
-          }
-          transition={{ duration: reduceMotion ? 0.2 : 0.78, delay: reduceMotion ? index * 0.05 : 0.5 + index * 0.5, ease: CUT_EASE }}
         >
           <BrandMark small />
           <p className={styles.pixelChat}>
@@ -413,13 +309,13 @@ function FlagChatDemo({ reduceMotion }: { reduceMotion: boolean }) {
             {' '}<span className={`${styles.chatViolation} ${styles[`violation${event.violation}`]}`}>{event.violation}</span>
             {' '}<span className={styles.chatSeparator}>|</span>{' '}<span className={styles.chatWdr}>[WDR]</span>
           </p>
-        </motion.div>
+        </div>
       ))}
     </div>
   );
 }
 
-function LegitilsChapter({ reduceMotion }: { reduceMotion: boolean }) {
+function LegitilsChapter() {
   return (
     <MotionFrame className={`${styles.frame} ${styles.legitilsChapter}`} label="MirrorProxy Legitils notification demo">
       <div className={styles.flagNoise} />
@@ -427,16 +323,11 @@ function LegitilsChapter({ reduceMotion }: { reduceMotion: boolean }) {
       <div className={styles.flagTraces} />
       <BrandLockup />
       <span className={styles.timecode}>00:00:01:12&nbsp;&nbsp;&nbsp;›››</span>
-      <motion.h2
-        className={styles.flagTitle}
-        initial={{ opacity: 0, y: 90, scale: 0.96, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-        transition={{ duration: reduceMotion ? 0.22 : 0.66, ease: SHARP_EASE }}
-      >
+      <h2 className={styles.flagTitle}>
         <span>FLAG</span>
         <span>NOW</span>
-      </motion.h2>
-      <FlagChatDemo reduceMotion={reduceMotion} />
+      </h2>
+      <FlagChatDemo />
       <div className={styles.flagFooter}>
         <span>LIVE SIGNAL / BED WARS</span>
         <span>FAIR PLAY, SMART AWARENESS</span>
@@ -445,34 +336,21 @@ function LegitilsChapter({ reduceMotion }: { reduceMotion: boolean }) {
   );
 }
 
-function ProxyChapter({ reduceMotion }: { reduceMotion: boolean }) {
-  const routeStyle = { '--delay': '0.1s' } as CSSProperties;
-
+function ProxyChapter() {
   return (
     <MotionFrame className={`${styles.frame} ${styles.proxyChapter}`} label="MirrorProxy project in progress">
       <div className={styles.proxyBand} />
       <div className={styles.proxyCorner} />
       <BrandLockup />
-      <motion.h2
-        className={styles.proxyTitle}
-        initial={{ opacity: 0, y: 54, scale: 0.97, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-        transition={{ duration: reduceMotion ? 0.22 : 0.66, ease: SHARP_EASE }}
-      >
-        ROUTE / YOUR VIEW
-      </motion.h2>
+      <h2 className={styles.proxyTitle}>ROUTE / YOUR VIEW</h2>
       <div className={styles.proxyRoute}>
         {['CLIENT', 'MIRRORPROXY', 'HYPIXEL'].map((name, index) => (
-          <motion.div
+          <div
             key={name}
             className={`${styles.proxyNode} ${index === 1 ? styles.proxyNodeMain : ''}`}
-            initial={{ opacity: 0, scale: 0.76, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            transition={{ duration: reduceMotion ? 0.18 : 0.4, delay: reduceMotion ? index * 0.06 : 0.18 + index * 0.16, ease: CUT_EASE }}
-            style={index === 1 ? routeStyle : undefined}
           >
             {name}
-          </motion.div>
+          </div>
         ))}
         <span className={styles.proxyConnectorOne} />
         <span className={styles.proxyConnectorTwo} />
@@ -495,40 +373,24 @@ function MinecraftMark() {
   );
 }
 
-function MinecraftBlockQueue({ reduceMotion }: { reduceMotion: boolean }) {
-  const blocks = useMinecraftBlockQueue(reduceMotion);
+function MinecraftBlockQueue() {
+  const blocks = createMinecraftBlockSet();
 
   return (
     <div className={styles.minecraftBlockStage} aria-hidden="true">
-      <AnimatePresence initial={false}>
-        {blocks.map((block, index) => (
-          <motion.div
+      {blocks.map((block) => (
+          <div
             className={`${styles.minecraftBlock} ${styles[`minecraftBlock${block.tone[0].toUpperCase()}${block.tone.slice(1)}`]}`}
             key={block.id}
-            layout={!reduceMotion}
-            initial={reduceMotion ? { opacity: 1, x: 0, y: 0, rotate: 0 } : { opacity: 0, x: '115vw', y: 38, rotate: 250, scale: 0.86 }}
-            animate={
-              reduceMotion
-                ? { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }
-                : { opacity: 1, x: 0, y: [20, -9, 0], rotate: [250, -14, 0], scale: [0.86, 1.05, 1] }
-            }
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: '-16vw', y: 30, rotate: -170, scale: 0.78 }}
-            transition={{
-              layout: { duration: reduceMotion ? 0.01 : 0.34, ease: CUT_EASE },
-              duration: reduceMotion ? 0.01 : 0.52,
-              delay: reduceMotion ? 0 : index === 0 && blocks.length === 1 ? 0.24 : 0,
-              ease: CUT_EASE,
-            }}
           >
             <span className={styles.minecraftBlockTexture} />
-          </motion.div>
+          </div>
         ))}
-      </AnimatePresence>
     </div>
   );
 }
 
-function MinecraftChapter({ reduceMotion }: { reduceMotion: boolean }) {
+function MinecraftChapter() {
   return (
     <MotionFrame className={`${styles.frame} ${styles.minecraftChapter}`} label="mc.snkisk.com Minecraft production">
       <div className={styles.minecraftOrangeSlope} />
@@ -544,22 +406,13 @@ function MinecraftChapter({ reduceMotion }: { reduceMotion: boolean }) {
         <em>Minecraft Production</em>
       </a>
 
-      <motion.h2
-        className={styles.minecraftTitle}
-        initial={{ opacity: 0, x: 76, y: 42, scale: 0.96, filter: 'blur(12px)' }}
-        animate={
-          reduceMotion
-            ? { opacity: 1, x: 0, y: 0, scale: 1, filter: 'blur(0px)' }
-            : { opacity: 1, x: 0, y: [0, -3, 0], scale: 1, filter: 'blur(0px)' }
-        }
-        transition={{ duration: reduceMotion ? 0.2 : 0.72, ease: SHARP_EASE, y: { duration: 3.8, repeat: Infinity, ease: 'easeInOut' } }}
-      >
+      <h2 className={styles.minecraftTitle}>
         <span>BUILD</span>
         <span><i>/</i><strong>THE NEXT</strong></span>
         <b>BLOCK</b>
-      </motion.h2>
+      </h2>
 
-      <MinecraftBlockQueue reduceMotion={reduceMotion} />
+      <MinecraftBlockQueue />
       <div className={styles.minecraftFooter}>
         <span>01&nbsp;&nbsp; IDEA <i /> 02&nbsp;&nbsp; BUILD <i /> 03&nbsp;&nbsp; TEST <i /> 04&nbsp;&nbsp; LAUNCH</span>
         <strong>LAUNCHING NOW&nbsp;&nbsp;›››</strong>
@@ -568,9 +421,7 @@ function MinecraftChapter({ reduceMotion }: { reduceMotion: boolean }) {
   );
 }
 
-function HensyokuMateChapter({ reduceMotion }: { reduceMotion: boolean }) {
-  const screen = useHensyokuScreen(reduceMotion);
-
+function HensyokuMateChapter() {
   return (
     <MotionFrame className={`${styles.frame} ${styles.hensyokuChapter}`} label="偏食メイト product demo">
       <div className={styles.hensyokuSun} />
@@ -581,45 +432,20 @@ function HensyokuMateChapter({ reduceMotion }: { reduceMotion: boolean }) {
         <a href="https://hensyoku-mate.snkisk.com/" className={styles.hensyokuStatus}>hensyoku-mate.snkisk.com <b>IN PROGRESS</b></a>
       </div>
 
-      <motion.h2
-        className={styles.hensyokuTitle}
-        initial={{ opacity: 0, x: -42, y: 20, filter: 'blur(10px)' }}
-        animate={
-          reduceMotion
-            ? { opacity: 1, x: 0, y: 0, filter: 'blur(0px)' }
-            : { opacity: 1, x: 0, y: [0, -2, 0], filter: 'blur(0px)' }
-        }
-        transition={{ duration: reduceMotion ? 0.2 : 0.68, ease: SHARP_EASE, y: { duration: 4.2, repeat: Infinity, ease: 'easeInOut' } }}
-      >
+      <h2 className={styles.hensyokuTitle}>
         <span>偏食、</span>
         <strong>治さなくていい。</strong>
-      </motion.h2>
+      </h2>
       <p className={styles.hensyokuCaption}>食べられるものを起点に、みんなでごはんを決める。</p>
 
       <div className={styles.hensyokuPhone}>
-        <AnimatePresence initial={false} mode="sync">
-          <motion.img
-            key={screen.id}
-            className={`${styles.hensyokuScreen} ${styles[`hensyokuScreen${screen.id[0].toUpperCase()}${screen.id.slice(1)}`]}`}
-            src={screen.src}
-            alt={screen.alt}
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 52, scale: 1.025, filter: 'blur(7px)' }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -32, scale: 0.99, filter: 'blur(5px)' }}
-            transition={{ duration: reduceMotion ? 0.18 : 0.5, ease: CUT_EASE }}
-          />
-        </AnimatePresence>
+        <img className={`${styles.hensyokuScreen} ${styles.hensyokuScreenSafe}`} src={HENSYOKU_SAFE_SCREEN.src} alt={HENSYOKU_SAFE_SCREEN.alt} />
       </div>
 
-      <motion.div
-        className={styles.hensyokuMetric}
-        initial={{ opacity: 0, scale: 0.84, filter: 'blur(8px)' }}
-        animate={screen.id === 'safe' ? { opacity: 1, scale: 1, filter: 'blur(0px)' } : { opacity: 0, scale: 0.84, filter: 'blur(8px)' }}
-        transition={{ duration: reduceMotion ? 0.01 : 0.42, ease: CUT_EASE }}
-      >
+      <div className={styles.hensyokuMetric}>
         <b>45%</b>
         <span>いつもの安全圏</span>
-      </motion.div>
+      </div>
       <div className={styles.hensyokuFooter}>PALETTE / CONSULT / REGULARS / RESULT</div>
     </MotionFrame>
   );
@@ -636,11 +462,11 @@ export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps
   const cutFrameMotion = CUT_FRAME_MOTIONS[cut];
 
   const activeCut =
-    cut === 'links' ? <LinkChapter reduceMotion={reduceMotion} opening /> :
-    cut === 'legitils' ? <LegitilsChapter reduceMotion={reduceMotion} /> :
-    cut === 'proxy' ? <ProxyChapter reduceMotion={reduceMotion} /> :
-    cut === 'minecraft' ? <MinecraftChapter reduceMotion={reduceMotion} /> :
-    <HensyokuMateChapter reduceMotion={reduceMotion} />;
+    cut === 'links' ? <LinkChapter /> :
+    cut === 'legitils' ? <LegitilsChapter /> :
+    cut === 'proxy' ? <ProxyChapter /> :
+    cut === 'minecraft' ? <MinecraftChapter /> :
+    <HensyokuMateChapter />;
 
   return (
     <MotionConfig reducedMotion="user">
