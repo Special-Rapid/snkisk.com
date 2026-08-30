@@ -84,6 +84,15 @@ export default function App() {
   const handleHandoffCovered = useCallback(() => setStage('home'), []);
 
   useEffect(() => {
+    document.documentElement.dataset.siteStage = stage;
+    document.body.dataset.siteStage = stage;
+    return () => {
+      delete document.documentElement.dataset.siteStage;
+      delete document.body.dataset.siteStage;
+    };
+  }, [stage]);
+
+  useEffect(() => {
     if (shortcutDestination) {
       window.location.replace(shortcutDestination);
     }
@@ -94,11 +103,11 @@ export default function App() {
   }
 
   return (
-    <div className={styles.stage}>
+    <div className={`${styles.stage} ${showHome ? styles.stagePortfolio : ''}`}>
       <AnimatePresence mode="sync" initial={false}>
         {showHome ? (
           <motion.div
-            className={styles.frame}
+            className={styles.portfolioFrame}
             key="portfolio-home"
             initial={{ clipPath: 'inset(100% 0 0 0)', opacity: 0.4 }}
             animate={{ clipPath: 'inset(0% 0 0 0)', opacity: 1 }}

@@ -1403,33 +1403,52 @@
   line-height: 1.65;
 }
 
-.hensyokuPhone {
+.hensyokuScreenStack {
   position: absolute;
   z-index: 5;
-  top: 6%;
+  top: 10%;
   right: clamp(5%, 9vw, 10rem);
   display: grid;
-  width: min(30vw, 23rem);
-  height: min(88vh, 52rem);
+  width: min(42vw, 41rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.45rem, 1vw, 0.9rem);
+}
+
+.hensyokuScreenCard {
+  position: relative;
+  height: min(39vh, 23rem);
+  margin: 0;
   overflow: hidden;
-  border: 0.45rem solid #ffffff;
-  border-radius: clamp(1.8rem, 3.2vw, 3.2rem);
+  border: clamp(0.22rem, 0.48vw, 0.42rem) solid #ffffff;
+  border-radius: clamp(1.1rem, 2vw, 2rem);
   background: #fff8f2;
-  box-shadow: 0 1.6rem 4rem rgba(115, 66, 38, 0.18), 0 0 0 1px rgba(104, 61, 38, 0.12);
+  box-shadow: 0 1rem 2.5rem rgba(115, 66, 38, 0.16), 0 0 0 1px rgba(104, 61, 38, 0.1);
+}
+
+.hensyokuScreenCard:nth-child(2) { transform: translateY(clamp(0.7rem, 1.8vw, 1.8rem)); }
+.hensyokuScreenCard:nth-child(3) { transform: translateY(clamp(-0.4rem, -0.8vw, -0.8rem)); }
+.hensyokuScreenCard:nth-child(4) { transform: translateY(clamp(0.8rem, 2.3vw, 2.4rem)); }
+
+.hensyokuScreenCard figcaption {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.45rem;
+  padding: 0.24rem 0.34rem;
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.86);
+  color: #9b583b;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: clamp(0.38rem, 0.5vw, 0.54rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 
 .hensyokuScreen {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 42%;
+  object-position: center 20%;
 }
-
-.hensyokuScreenLoading { object-position: center 50%; }
-.hensyokuScreenPalette { object-position: center 43%; }
-.hensyokuScreenSafe { object-position: center 28%; }
 
 .hensyokuMetric {
   position: absolute;
@@ -1541,8 +1560,9 @@
   .hensyokuStatus b { font-size: 0.72em; }
   .hensyokuTitle { align-self: start; width: auto; margin-top: 16vh; font-size: clamp(3rem, 13.6vw, 5rem); line-height: 1.04; }
   .hensyokuCaption { top: 41%; left: 1.25rem; width: 15rem; font-size: 0.76rem; }
-  .hensyokuPhone { top: 47%; right: 9%; width: min(56vw, 15.4rem); height: 49vh; border-width: 0.3rem; border-radius: 1.7rem; }
-  .hensyokuScreenSafe { object-position: center 30%; }
+  .hensyokuScreenStack { top: 47%; right: 7%; width: min(61vw, 17rem); gap: 0.35rem; }
+  .hensyokuScreenCard { height: 25vh; border-width: 0.25rem; border-radius: 0.8rem; }
+  .hensyokuScreenCard figcaption { right: 0.25rem; bottom: 0.25rem; padding: 0.18rem 0.22rem; font-size: 0.34rem; }
   .hensyokuMetric { right: 0.9rem; bottom: 9%; min-width: 6.7rem; padding: 0.62rem 0.75rem; border-radius: 0.9rem; }
   .hensyokuMetric b { font-size: 2.8rem; }
   .hensyokuMetric span { margin-top: 0.36rem; font-size: 0.52rem; }
@@ -1598,7 +1618,7 @@
   .minecraftTitle,
   .minecraftBlockStage,
   .hensyokuTitle,
-  .hensyokuPhone,
+  .hensyokuScreenStack,
   .hensyokuMetric { animation: none; }
 }
 

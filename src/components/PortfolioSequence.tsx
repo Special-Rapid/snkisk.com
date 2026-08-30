@@ -105,10 +105,12 @@ type MinecraftBlock = {
   tone: MinecraftBlockTone;
 };
 
-const HENSYOKU_SAFE_SCREEN = {
-  src: 'https://images.snkisk.com/snkisk.com/images/4fc567c0-54f6-438b-9adf-81b3d3f550be.png',
-  alt: '偏食メイトの安全圏画面',
-};
+const HENSYOKU_RELEASE_SCREENS = [
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/49df2fd72484d3a75eaa22ad059b9d89120860ab698779d24f0fc73986d4fdf1.jpg', alt: '偏食メイトのパレット画面', label: 'PALETTE' },
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/80011791b4b58090bac67c89508670b3386c55be34b7e6977cec13e7e491ede9.jpg', alt: '偏食メイトの検索条件画面', label: 'SEARCH' },
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/7ba463c144280749bba24ce75e1cbd0b5df36b26a8908ebcdeaed323af6d6bd2.jpg', alt: '偏食メイトの候補一覧画面', label: 'RESULTS' },
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/f386b2f632c9d524734f0ec022c97f379bdba78ae22c238081431483fd8c0ae6.jpg', alt: '偏食メイトの候補詳細画面', label: 'DETAIL' },
+] as const;
 
 const MINECRAFT_BLOCK_TONES: MinecraftBlockTone[] = ['grass', 'deepslate', 'water', 'quartz', 'craft', 'ore'];
 const MINECRAFT_BLOCK_COUNT = 5;
@@ -429,24 +431,29 @@ function HensyokuMateChapter() {
       <div className={styles.hensyokuDots} />
       <div className={styles.hensyokuKicker}>
         偏食メイト <span>/ YOUR PALETTE</span>
-        <a href="https://hensyoku-mate.snkisk.com/" className={styles.hensyokuStatus}>hensyoku-mate.snkisk.com <b>IN PROGRESS</b></a>
+        <a href="https://hensyoku-mate.snkisk.com/" className={styles.hensyokuStatus}>hensyoku-mate.snkisk.com <b>RELEASED</b></a>
       </div>
 
       <h2 className={styles.hensyokuTitle}>
         <span>偏食、</span>
         <strong>治さなくていい。</strong>
       </h2>
-      <p className={styles.hensyokuCaption}>食べられるものを起点に、みんなでごはんを決める。</p>
+      <p className={styles.hensyokuCaption}>食べられるものを起点に、今日のごはんを選びやすくする。</p>
 
-      <div className={styles.hensyokuPhone}>
-        <img className={`${styles.hensyokuScreen} ${styles.hensyokuScreenSafe}`} src={HENSYOKU_SAFE_SCREEN.src} alt={HENSYOKU_SAFE_SCREEN.alt} />
+      <div className={styles.hensyokuScreenStack} aria-label="偏食メイトのリリース済み画面">
+        {HENSYOKU_RELEASE_SCREENS.map((screen) => (
+          <figure className={styles.hensyokuScreenCard} key={screen.label}>
+            <img className={styles.hensyokuScreen} src={screen.src} alt={screen.alt} />
+            <figcaption>{screen.label}</figcaption>
+          </figure>
+        ))}
       </div>
 
       <div className={styles.hensyokuMetric}>
-        <b>45%</b>
-        <span>いつもの安全圏</span>
+        <b>4</b>
+        <span>パレットから候補まで</span>
       </div>
-      <div className={styles.hensyokuFooter}>PALETTE / CONSULT / REGULARS / RESULT</div>
+      <div className={styles.hensyokuFooter}>PALETTE / SEARCH / RESULTS / DETAIL</div>
     </MotionFrame>
   );
 }

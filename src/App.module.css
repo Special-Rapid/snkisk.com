@@ -1,18 +1,29 @@
-.stage,
-.frame {
+.stage {
+  position: relative;
   width: 100%;
   height: 100svh;
   overflow: hidden;
-}
-
-.stage {
-  position: relative;
   background: linear-gradient(130deg, #075cf2 0%, #5620ee 39%, #e70691 68%, #ff780c 100%);
 }
 
 .frame {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.stagePortfolio {
+  height: auto;
+  min-height: 100svh;
+  overflow: visible;
+}
+
+.portfolioFrame {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
 }
 
 .siteHandoff {
