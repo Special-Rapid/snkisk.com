@@ -106,10 +106,10 @@ type MinecraftBlock = {
 };
 
 const HENSYOKU_RELEASE_SCREENS = [
-  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/49df2fd72484d3a75eaa22ad059b9d89120860ab698779d24f0fc73986d4fdf1.jpg', alt: '偏食メイトのパレット画面', label: 'PALETTE' },
-  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/80011791b4b58090bac67c89508670b3386c55be34b7e6977cec13e7e491ede9.jpg', alt: '偏食メイトの検索条件画面', label: 'SEARCH' },
-  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/7ba463c144280749bba24ce75e1cbd0b5df36b26a8908ebcdeaed323af6d6bd2.jpg', alt: '偏食メイトの候補一覧画面', label: 'RESULTS' },
-  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/f386b2f632c9d524734f0ec022c97f379bdba78ae22c238081431483fd8c0ae6.jpg', alt: '偏食メイトの候補詳細画面', label: 'DETAIL' },
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/a451e9e76fb5d3c6448eb143c27acf1a1427786d3aa6253206e509d67c7672cb.png', alt: '偏食メイトのパレット画面', label: 'PALETTE' },
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/11cc5b4f60cce7e43544df74ca6ff1b90bc1ddb19525aa77e56dc1d478a6e67f.png', alt: '偏食メイトの検索条件画面', label: 'SEARCH' },
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/0434b107639ae9af135f19f408050d97e3775c5510081cc21e8e2cdc8e7f4327.png', alt: '偏食メイトの候補一覧画面', label: 'RESULTS' },
+  { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/6ca361f2e60fc21b74094d7f5042c69b460f44a5e6c8f16ecead70e8377da735.png', alt: '偏食メイトのログイン・登録画面', label: 'LOGIN / SIGNUP' },
 ] as const;
 
 const MINECRAFT_BLOCK_TONES: MinecraftBlockTone[] = ['grass', 'deepslate', 'water', 'quartz', 'craft', 'ore'];
@@ -453,7 +453,7 @@ function HensyokuMateChapter() {
         <b>4</b>
         <span>パレットから候補まで</span>
       </div>
-      <div className={styles.hensyokuFooter}>PALETTE / SEARCH / RESULTS / DETAIL</div>
+      <div className={styles.hensyokuFooter}>PALETTE / SEARCH / RESULTS / LOGIN</div>
     </MotionFrame>
   );
 }
