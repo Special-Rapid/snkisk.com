@@ -15,6 +15,24 @@ const HENSYOKU_DESKTOP_SCREENS = [
   { src: 'https://images.snkisk.com/hensyoku-mate.snkisk.com/images/6ca361f2e60fc21b74094d7f5042c69b460f44a5e6c8f16ecead70e8377da735.png', alt: '偏食メイトのログイン・登録画面', label: 'LOGIN / SIGNUP' },
 ] as const;
 
+const PROJECT_MEDIA = {
+  go: {
+    src: 'https://images.snkisk.com/snkisk.com/images/617c589a678d1b7a2c3c29b66200c063922dfd97d17779b683d58b44e2484843.jpg',
+    alt: 'go.snkisk.comの短縮URL作成画面',
+    label: 'LIVE URL CREATOR',
+  },
+  lmp: {
+    src: 'https://images.snkisk.com/lmp.snkisk.com/images/fb02ffbc-41f8-4a01-bc65-27d7765983f8.png',
+    alt: 'LMP — Legitils + MirrorProxyの公式ロゴと開発プレビュー',
+    label: 'OFFICIAL DEVELOPMENT PREVIEW',
+  },
+  minecraft: {
+    src: 'https://images.snkisk.com/WebD_Minecraft_Site/images/6e95871d-75c4-47f2-b802-4e98f5a0ea36.png',
+    alt: 'Minecraft Productionの公式サイトに掲載されているゲーム内風景',
+    label: 'IN-GAME WORLD',
+  },
+} as const;
+
 function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
   return <a className={styles.projectLink} href={href} target="_blank" rel="noreferrer">{children}<span aria-hidden="true">↗</span></a>;
 }
@@ -41,24 +59,35 @@ export default function PortfolioHome() {
 
       <section className={`${styles.projectSection} ${styles.goSection}`} aria-labelledby="go-title">
         <div className={styles.sectionNumber}>{PROJECTS.go.id}</div>
-        <div className={styles.goVisual} aria-hidden="true"><i /><i /><i /><b>ONE LINK</b></div>
+        <figure className={styles.projectMedia}>
+          <img src={PROJECT_MEDIA.go.src} alt={PROJECT_MEDIA.go.alt} />
+          <figcaption>{PROJECT_MEDIA.go.label}</figcaption>
+        </figure>
         <div className={styles.sectionContent}>
           <p className={styles.sectionKicker}>ROUTE / IDENTITY / HANDOFF</p><h2 id="go-title">{PROJECTS.go.name}</h2><p className={styles.projectCopy}>{PROJECTS.go.copy}</p><ExternalLink href={PROJECTS.go.href}>{PROJECTS.go.url}</ExternalLink>
         </div>
       </section>
 
       <section className={`${styles.projectSection} ${styles.lmpSection}`} aria-labelledby="lmp-title">
-        <div className={styles.lmpGrid} aria-hidden="true" /><div className={styles.lmpSignal} aria-hidden="true"><i /><i /><i /><b>OBSERVE</b></div><div className={styles.sectionNumber}>{PROJECTS.lmp.id}</div>
+        <div className={styles.sectionNumber}>{PROJECTS.lmp.id}</div>
+        <figure className={styles.projectMedia}>
+          <img src={PROJECT_MEDIA.lmp.src} alt={PROJECT_MEDIA.lmp.alt} />
+          <figcaption>{PROJECT_MEDIA.lmp.label}</figcaption>
+        </figure>
         <div className={styles.sectionContent}>
           <p className={styles.sectionKicker}>SIGNAL / OBSERVATION / PLAY</p><h2 id="lmp-title">MirrorProxy<br /><em>/ Legitils</em></h2><p className={styles.projectCopy}>{PROJECTS.lmp.copy}</p><ExternalLink href={PROJECTS.lmp.href}>{PROJECTS.lmp.url}</ExternalLink>
         </div>
       </section>
 
       <section className={`${styles.projectSection} ${styles.minecraftSection}`} aria-labelledby="minecraft-title">
-        <div className={styles.sectionNumber}>{PROJECTS.minecraft.id}</div><div className={styles.minecraftBlocks} aria-hidden="true">{Array.from({ length: 18 }, (_, index) => <i key={index} />)}</div>
+        <div className={styles.sectionNumber}>{PROJECTS.minecraft.id}</div>
+        <figure className={styles.projectMedia}>
+          <img src={PROJECT_MEDIA.minecraft.src} alt={PROJECT_MEDIA.minecraft.alt} />
+          <figcaption>{PROJECT_MEDIA.minecraft.label}</figcaption>
+        </figure>
         <div className={styles.sectionContent}>
           <p className={styles.sectionKicker}>WORLD / SYSTEM / PRODUCTION</p><h2 id="minecraft-title">MINECRAFT<br />PRODUCTION</h2><p className={styles.projectCopy}>{PROJECTS.minecraft.copy}</p><ExternalLink href={PROJECTS.minecraft.href}>{PROJECTS.minecraft.url}</ExternalLink>
-        </div><p className={styles.minecraftCaption}>BUILD THE MOMENT<br />NOT JUST THE MAP.</p>
+        </div>
       </section>
 
       <section className={`${styles.projectSection} ${styles.hensyokuSection}`} aria-labelledby="hensyoku-title">
