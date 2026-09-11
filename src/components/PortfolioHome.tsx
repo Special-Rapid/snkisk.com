@@ -3,7 +3,7 @@ import styles from './PortfolioHome.module.css';
 
 const PROJECTS = {
   go: { id: '01', name: 'Link Shortener', url: 'go.snkisk.com', href: 'https://go.snkisk.com/', copy: 'ひとつのリンクを、迷わない入口に変える。必要な案内へ最短でつなぐ小さな基盤。' },
-  lmp: { id: '02', name: 'MirrorProxy / Legitils', url: 'lmp.snkisk.com', href: 'https://lmp.snkisk.com/', copy: 'Minecraft の世界を観察し、プレイヤーが安心して遊べる状況を見える形にする。' },
+  legitils: { id: '02', name: 'Legitils', url: 'lmp.snkisk.com', href: 'https://lmp.snkisk.com/', copy: 'Minecraft の世界を観察し、プレイヤーが安心して遊べる状況を見える形にする。' },
   minecraft: { id: '03', name: 'Minecraft Production', url: 'mc.snkisk.com', href: 'https://mc.snkisk.com/', copy: 'ゲームの中で起きることを、体験・映像・仕組みのすべてから組み立てる制作ライン。' },
   hensyoku: { id: '04', name: '偏食メイト', url: 'hensyoku-mate.snkisk.com', href: 'https://hensyoku-mate.snkisk.com/', copy: '食べられるものを起点に、今日のごはんを選びやすくするiPhoneアプリ。' },
 };
@@ -21,9 +21,9 @@ const PROJECT_MEDIA = {
     alt: 'go.snkisk.comの短縮URL作成画面',
     label: 'LIVE URL CREATOR',
   },
-  lmp: {
+  legitils: {
     src: 'https://images.snkisk.com/lmp.snkisk.com/images/fb02ffbc-41f8-4a01-bc65-27d7765983f8.png',
-    alt: 'LMP — Legitils + MirrorProxyの公式ロゴと開発プレビュー',
+    alt: 'Legitilsの公式ロゴと開発プレビュー',
     label: 'OFFICIAL DEVELOPMENT PREVIEW',
   },
   minecraft: {
@@ -68,14 +68,14 @@ export default function PortfolioHome() {
         </div>
       </section>
 
-      <section className={`${styles.projectSection} ${styles.lmpSection}`} aria-labelledby="lmp-title">
-        <div className={styles.sectionNumber}>{PROJECTS.lmp.id}</div>
+      <section className={`${styles.projectSection} ${styles.legitilsSection}`} aria-labelledby="legitils-title">
+        <div className={styles.sectionNumber}>{PROJECTS.legitils.id}</div>
         <figure className={styles.projectMedia}>
-          <img src={PROJECT_MEDIA.lmp.src} alt={PROJECT_MEDIA.lmp.alt} />
-          <figcaption>{PROJECT_MEDIA.lmp.label}</figcaption>
+          <img src={PROJECT_MEDIA.legitils.src} alt={PROJECT_MEDIA.legitils.alt} />
+          <figcaption>{PROJECT_MEDIA.legitils.label}</figcaption>
         </figure>
         <div className={styles.sectionContent}>
-          <p className={styles.sectionKicker}>SIGNAL / OBSERVATION / PLAY</p><h2 id="lmp-title">MirrorProxy<br /><em>/ Legitils</em></h2><p className={styles.projectCopy}>{PROJECTS.lmp.copy}</p><ExternalLink href={PROJECTS.lmp.href}>{PROJECTS.lmp.url}</ExternalLink>
+          <p className={styles.sectionKicker}>SIGNAL / OBSERVATION / PLAY</p><h2 id="legitils-title">{PROJECTS.legitils.name}</h2><p className={styles.projectCopy}>{PROJECTS.legitils.copy}</p><ExternalLink href={PROJECTS.legitils.href}>{PROJECTS.legitils.url}</ExternalLink>
         </div>
       </section>
 

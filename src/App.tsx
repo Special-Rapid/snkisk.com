@@ -40,36 +40,16 @@ function SiteHandoff({ phase, reduceMotion, onCovered }: SiteHandoffProps) {
     <motion.div
       className={styles.siteHandoff}
       aria-hidden="true"
-      initial={{ opacity: 1 }}
-      animate={isCover ? { opacity: 1 } : reduceMotion ? { opacity: [1, 0] } : { opacity: [1, 1, 0] }}
+      initial={reduceMotion ? { opacity: 1 } : { clipPath: isCover ? 'inset(100% 0 0 0)' : 'inset(0)' }}
+      animate={
+        reduceMotion
+          ? { opacity: isCover ? 1 : 0 }
+          : isCover
+            ? { clipPath: 'inset(0)' }
+            : { clipPath: ['inset(0)', 'inset(0)', 'inset(0 0 100% 0)'] }
+      }
       transition={{ duration: isCover ? (reduceMotion ? 0.18 : 0.58) : (reduceMotion ? 0.22 : 1.74), times: isCover ? undefined : reduceMotion ? undefined : [0, 0.86, 1], ease: [0.18, 0.89, 0.32, 1] }}
-    >
-      {/* The warm finale closes first, then opens onto the portfolio rather than fading between pages. */}
-      {[
-        styles.siteHandoffCream,
-        styles.siteHandoffOrange,
-        styles.siteHandoffBlue,
-      ].map((color, index) => (
-        <motion.i
-          className={`${styles.siteHandoffSlat} ${color}`}
-          key={color}
-          initial={reduceMotion ? { opacity: 1 } : { scaleY: isCover ? 0 : 1, y: 0 }}
-          animate={
-            reduceMotion
-              ? { opacity: isCover ? 1 : 0 }
-              : isCover
-                ? { scaleY: 1, y: 0 }
-                : { scaleY: [1, 1, 0], y: [0, 0, index === 1 ? '66%' : '-66%'] }
-          }
-          transition={{
-            duration: reduceMotion ? 0.18 : isCover ? 0.54 + index * 0.06 : 1.08 + index * 0.08,
-            delay: reduceMotion ? 0 : isCover ? index * 0.045 : 0,
-            times: reduceMotion || isCover ? undefined : [0, 0.5 + index * 0.04, 1],
-            ease: [0.18, 0.89, 0.32, 1],
-          }}
-        />
-      ))}
-    </motion.div>
+    />
   );
 }
 

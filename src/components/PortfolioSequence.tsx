@@ -7,14 +7,13 @@ import styles from './PortfolioSequence.module.css';
 const CUT_EASE: [number, number, number, number] = [0.18, 0.89, 0.32, 1.08];
 const SHARP_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-const SHOWREEL_DURATION_MS = 19900;
+const SHOWREEL_DURATION_MS = 16500;
 
 const SHOWREEL_CUTS = [
   { id: 'links', startMs: 0, endMs: 3400 },
-  { id: 'legitils', startMs: 3400, endMs: 7600 },
-  { id: 'proxy', startMs: 7600, endMs: 11000 },
-  { id: 'minecraft', startMs: 11000, endMs: 15400 },
-  { id: 'hensyoku', startMs: 15400, endMs: SHOWREEL_DURATION_MS },
+  { id: 'legitils', startMs: 3400, endMs: 8000 },
+  { id: 'minecraft', startMs: 8000, endMs: 12400 },
+  { id: 'hensyoku', startMs: 12400, endMs: SHOWREEL_DURATION_MS },
 ] as const;
 
 type ShowreelCutId = (typeof SHOWREEL_CUTS)[number]['id'];
@@ -36,7 +35,6 @@ type CutFrameMotion = {
 const CUT_FRAME_MOTIONS: Record<ShowreelCutId, CutFrameMotion> = {
   links: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
   legitils: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
-  proxy: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
   minecraft: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
   hensyoku: { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 } },
 };
@@ -143,11 +141,8 @@ function BrandMark({ small = false }: { small?: boolean }) {
 
 function BrandLockup() {
   return (
-    <div className={styles.brandLockup} aria-label="MirrorProxy / Legitils">
+    <div className={styles.brandLockup} aria-label="Legitils">
       <BrandMark small />
-      <span className={styles.mirrorWord}>Mirror</span>
-      <span className={styles.proxyWord}>Proxy</span>
-      <span className={styles.brandSlash}>/</span>
       <span className={styles.legitilsWord}>Legitils</span>
     </div>
   );
@@ -236,14 +231,7 @@ function MatchCutTransition({ transition, reduceMotion }: { transition: Intermed
           <span className={styles.signalFlagCorner} />
         </div>
       ) : null}
-      {kind === 'legitils-proxy' ? (
-        <div className={styles.markRouteTransition}>
-          <span className={styles.markRoutePieces}>{Array.from({ length: 4 }, (_, index) => <i key={index} />)}</span>
-          <span className={styles.markRouteGrid}>{Array.from({ length: 6 }, (_, index) => <i key={index} />)}</span>
-          <b>ROUTE</b>
-        </div>
-      ) : null}
-      {kind === 'proxy-minecraft' ? (
+      {kind === 'legitils-minecraft' ? (
         <div className={styles.routeBlockTransition}>
           <span className={styles.routeBlockRails}>{Array.from({ length: 8 }, (_, index) => <i key={index} />)}</span>
           <span className={styles.routeBlockTiles}>{Array.from({ length: 12 }, (_, index) => <i key={index} />)}</span>
@@ -319,7 +307,7 @@ function FlagChatDemo() {
 
 function LegitilsChapter() {
   return (
-    <MotionFrame className={`${styles.frame} ${styles.legitilsChapter}`} label="MirrorProxy Legitils notification demo">
+    <MotionFrame className={`${styles.frame} ${styles.legitilsChapter}`} label="Legitils notification demo">
       <div className={styles.flagNoise} />
       <div className={styles.flagDisc} />
       <div className={styles.flagTraces} />
@@ -333,33 +321,6 @@ function LegitilsChapter() {
       <div className={styles.flagFooter}>
         <span>LIVE SIGNAL / BED WARS</span>
         <span>FAIR PLAY, SMART AWARENESS</span>
-      </div>
-    </MotionFrame>
-  );
-}
-
-function ProxyChapter() {
-  return (
-    <MotionFrame className={`${styles.frame} ${styles.proxyChapter}`} label="MirrorProxy project in progress">
-      <div className={styles.proxyBand} />
-      <div className={styles.proxyCorner} />
-      <BrandLockup />
-      <h2 className={styles.proxyTitle}>ROUTE / YOUR VIEW</h2>
-      <div className={styles.proxyRoute}>
-        {['CLIENT', 'MIRRORPROXY', 'HYPIXEL'].map((name, index) => (
-          <div
-            key={name}
-            className={`${styles.proxyNode} ${index === 1 ? styles.proxyNodeMain : ''}`}
-          >
-            {name}
-          </div>
-        ))}
-        <span className={styles.proxyConnectorOne} />
-        <span className={styles.proxyConnectorTwo} />
-      </div>
-      <div className={styles.proxyMeta}>
-        <span>LOCAL RELAY / IN PROGRESS</span>
-        <span>PERSONAL VIEW. LIVE MATCH SIGNAL.</span>
       </div>
     </MotionFrame>
   );
@@ -471,7 +432,6 @@ export default function PortfolioSequence({ onComplete }: PortfolioSequenceProps
   const activeCut =
     cut === 'links' ? <LinkChapter /> :
     cut === 'legitils' ? <LegitilsChapter /> :
-    cut === 'proxy' ? <ProxyChapter /> :
     cut === 'minecraft' ? <MinecraftChapter /> :
     <HensyokuMateChapter />;
 
