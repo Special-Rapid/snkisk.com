@@ -9,6 +9,7 @@ docs/
 !/public/sitemap.xml
 !/public/llms.txt
 !/public/404.html
+!/public/media/
 .env
 .env.*
 !.env.example

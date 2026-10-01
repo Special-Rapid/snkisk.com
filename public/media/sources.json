@@ -1,0 +1,25 @@
+[
+  {
+    "source": "https://images.snkisk.com/WebD_Minecraft_Site/images/6e95871d-75c4-47f2-b802-4e98f5a0ea36.png",
+    "sourceBytes": 8018544,
+    "sourceSHA256": "d76393f26441e1a7774d6c231da776f775fb8277b13c1a4707e362676c487f51",
+    "sourceDimensions": [
+      2940,
+      1846
+    ],
+    "file": "6e95871d-75c4-47f2-b802-4e98f5a0ea36.webp",
+    "bytes": 411122,
+    "dimensions": [
+      1600,
+      1005
+    ],
+    "sha256": "a24f6e6fad9fa1b0660757fd222f65aa1e50405fc8325ea0d143d39020ebaac5",
+    "conversion": {
+      "format": "WebP",
+      "quality": 88,
+      "method": 6,
+      "maxDimension": 1600
+    },
+    "licenseSource": "https://mc.snkisk.com/licenses"
+  }
+]

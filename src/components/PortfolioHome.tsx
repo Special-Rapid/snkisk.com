@@ -27,7 +27,7 @@ const PROJECT_MEDIA = {
     label: 'OFFICIAL DEVELOPMENT PREVIEW',
   },
   minecraft: {
-    src: 'https://images.snkisk.com/WebD_Minecraft_Site/images/6e95871d-75c4-47f2-b802-4e98f5a0ea36.png',
+    src: '/media/6e95871d-75c4-47f2-b802-4e98f5a0ea36.webp',
     alt: 'Minecraft Productionの公式サイトに掲載されているゲーム内風景',
     label: 'IN-GAME WORLD',
   },
