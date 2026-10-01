@@ -4,7 +4,11 @@ dist
 .wrangler/
 output/
 docs/
-public/
+/public/*
+!/public/robots.txt
+!/public/sitemap.xml
+!/public/llms.txt
+!/public/404.html
 .env
 .env.*
 !.env.example

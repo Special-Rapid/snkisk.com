@@ -1,0 +1,11 @@
+# snkisk
+
+Webとゲーム制作のポートフォリオです。公開サイトは制作物を紹介しています。
+
+- [ポートフォリオ](https://snkisk.com/)
+- [条件付き短縮URLサービス](https://go.snkisk.com/)
+- [Legitils](https://legitils.snkisk.com/)
+- [Minecraft Fan Site](https://mc.snkisk.com/)
+- [偏食メイト](https://hensyoku-mate.snkisk.com/)
+
+公開情報の取得を助ける案内です。モデル学習への追加許諾を示すものではありません。
