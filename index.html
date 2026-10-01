@@ -12,12 +12,33 @@
         min-height: 100%;
         background: linear-gradient(130deg, #075cf2 0%, #5620ee 39%, #e70691 68%, #ff780c 100%);
       }
+      .public-summary {
+        --summary-bg: #fff;
+        --summary-text: #172033;
+        --summary-link: #1247b8;
+        box-sizing: border-box;
+        max-width: 56rem;
+        margin: 2rem auto;
+        padding: clamp(1.25rem, 5vw, 3rem);
+        background: var(--summary-bg);
+        color: var(--summary-text);
+        font: 1rem/1.7 system-ui, sans-serif;
+        border-radius: 1rem;
+        overflow-wrap: anywhere;
+      }
+      .public-summary h1 { line-height: 1.2; }
+      .public-summary a { color: var(--summary-link); }
+      .public-summary a:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+      @media (prefers-color-scheme: dark) {
+        .public-summary { --summary-bg: #172033; --summary-text: #f4f6fc; --summary-link: #a8c8ff; }
+      }
     </style>
     <meta
       name="description"
       content="A motion-led portfolio by snkisk: web experiments, MirrorProxy / Legitils, and go.snkisk.com."
     />
     <link rel="canonical" href="https://snkisk.com/" />
+    <link rel="alternate" type="text/plain" title="snkisk site guide" href="https://snkisk.com/llms.txt" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="snkisk" />
@@ -46,7 +67,22 @@
     <title>snkisk | Motion & Projects</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main class="public-summary" aria-labelledby="summary-title">
+        <h1 id="summary-title">snkisk — Motion &amp; Projects</h1>
+        <p>A portfolio of web experiments, Minecraft projects, and an iPhone app.</p>
+        <p lang="ja">snkiskの制作紹介。Webサービス、Minecraftの制作・ツール、iPhoneアプリを公開しています。</p>
+        <h2>Selected projects / <span lang="ja">主な制作</span></h2>
+        <ul>
+          <li><a href="https://go.snkisk.com/">Link Shortener</a> — A short-link service. <span lang="ja">必要な案内へつなぐ短縮URLサービス。</span></li>
+          <li><a href="https://legitils.snkisk.com/">Legitils</a> — Minecraft observation tools. <span lang="ja">Minecraftの状況を見える形にするツール。</span></li>
+          <li><a href="https://mc.snkisk.com/">Minecraft Production</a> — Game experiences, video, and systems. <span lang="ja">体験・映像・仕組みから組み立てるMinecraft制作。</span></li>
+          <li><a href="https://hensyoku-mate.snkisk.com/" lang="ja">偏食メイト</a> — An iPhone app for choosing meals. <span lang="ja">食べられるものを起点に、今日のごはんを選びやすくするアプリ。</span></li>
+        </ul>
+        <p><a href="/llms.txt">Site guide / <span lang="ja">サイト案内</span></a></p>
+        <noscript><p>The animated portfolio requires JavaScript. <span lang="ja">上の紹介とリンクはJavaScriptなしでも利用できます。</span></p></noscript>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
