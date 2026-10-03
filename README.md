@@ -35,6 +35,10 @@ Cloudflare Pages へデプロイするには、Cloudflare に認証済みの環�
 npm run deploy:pages
 ```
 
+## 配信用画像
+
+Minecraft紹介画像はmc.snkisk.comと同じ軽量WebPを`images.snkisk.com`から共用します。repoに配信コピーは置かず、`public/media/sources.json`の`cdnUrl`が配信先です。`file`は移行前のWebP名の履歴で、元PNGのURL・SHA-256・寸法・容量とWebP変換条件も保持します。巨大PNGへの差し戻しは行いません。
+
 ## ライセンス
 
 MIT License。詳細は [LICENSE](./LICENSE) を参照してください。
