@@ -39,6 +39,8 @@ npm run deploy:pages
 
 Minecraft紹介画像はmc.snkisk.comと同じ軽量WebPを`images.snkisk.com`から共用します。repoに配信コピーは置かず、`public/media/sources.json`の`cdnUrl`が配信先です。`file`は移行前のWebP名の履歴で、元PNGのURL・SHA-256・寸法・容量とWebP変換条件も保持します。巨大PNGへの差し戻しは行いません。
 
+公開buildでは、`vite.config.ts` の `publishedFiles` に列挙した公開ファイルだけを `public/` から出力します。新しい公開ファイルは用途を確認してこの一覧に追加します。ローカルの未追跡ファイルや `docs/` の私有作業資料を無条件でコピーしません。製品画像のCDN配信と意図した公開仕様は維持します。
+
 ## ライセンス
 
 MIT License。詳細は [LICENSE](./LICENSE) を参照してください。
