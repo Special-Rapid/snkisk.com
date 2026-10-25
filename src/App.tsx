@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import PortfolioHome from './components/PortfolioHome';
 import PortfolioSequence from './components/PortfolioSequence';
 import styles from './App.module.css';
+import MotionPreview from './components/motion-preview/MotionPreview';
 
 type Stage = 'reel' | 'closing' | 'home';
 
@@ -54,6 +55,13 @@ function SiteHandoff({ phase, reduceMotion, onCovered }: SiteHandoffProps) {
 }
 
 export default function App() {
+  return window.location.pathname === '/'
+    && new URLSearchParams(window.location.search).get('preview') === 'go-legitils'
+    ? <MotionPreview />
+    : <PortfolioApp />;
+}
+
+function PortfolioApp() {
   const shortcutDestination = SHORTCUT_DESTINATIONS[window.location.pathname];
   const [stage, setStage] = useState<Stage>('reel');
   const reduceMotion = Boolean(useReducedMotion());
