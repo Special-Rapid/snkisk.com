@@ -1,0 +1,58 @@
+/* Preview-only semantic tokens; normal portfolio styles are intentionally unchanged. */
+:global(html[data-motion-preview='light']), :global(body[data-site-stage='home']:has([data-theme='light'])) { background: #f7f4ef; }
+:global(html[data-motion-preview='dark']), :global(body[data-site-stage='home']:has([data-theme='dark'])) { background: #181821; }
+.page {
+  --preview-bg: var(--bg-base);
+  --preview-text: var(--text-strong);
+  --preview-muted: #565160;
+  --preview-accent: #155bff;
+  --preview-line: #b3aec0;
+  --preview-space: 1rem;
+  --preview-space-lg: 2rem;
+  --preview-hit: 2.75rem;
+  --preview-small: 0.875rem;
+  --preview-body: 1rem;
+  --preview-heading: clamp(2rem, 6vw, 4.5rem);
+  min-height: 100svh;
+  background: var(--preview-bg);
+  color: var(--preview-text);
+  padding: max(var(--preview-space), env(safe-area-inset-top)) clamp(1rem, 7vw, 6rem) max(var(--preview-space-lg), env(safe-area-inset-bottom));
+  overflow-wrap: anywhere;
+}
+.page[data-theme='dark'] { --preview-bg: #181821; --preview-text: #f7f4ef; --preview-muted: #c4bfce; --preview-accent: #9ad6ff; --preview-line: #666275; }
+.header, .preferences, .controls { display: flex; align-items: center; flex-wrap: wrap; gap: var(--preview-space); }
+.header { justify-content: space-between; padding-bottom: var(--preview-space-lg); }
+.brand { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; text-decoration: none; }
+.preferences { font-size: var(--preview-small); }
+.preferences label { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.page select, .page button { min-height: var(--preview-hit); max-width: 100%; border: 1px solid var(--preview-line); border-radius: 0.5rem; background: var(--preview-bg); color: var(--preview-text); padding: 0.5rem var(--preview-space); font: inherit; }
+.page button { cursor: pointer; display: inline-flex; align-items: center; gap: var(--preview-space); }
+.page a { color: inherit; min-height: var(--preview-hit); display: inline-flex; align-items: center; }
+.page :is(a, button, select, h2):focus-visible { outline: 3px solid var(--preview-accent); outline-offset: 5px; }
+.study { max-width: 75rem; margin: auto; }
+.kicker { font-size: var(--preview-small); color: var(--preview-muted); margin: 0 0 var(--preview-space); }
+.study h1 { font-family: 'Syne', sans-serif; font-size: var(--preview-heading); line-height: 1.1; margin: 0; letter-spacing: -0.04em; }
+.stage { margin-block: var(--preview-space); }
+.stage[hidden] { display: none; }
+.stage svg { width: 100%; height: auto; display: block; overflow: visible; }
+.display { font-family: 'Syne', sans-serif; font-size: 115px; font-weight: 800; letter-spacing: -6px; fill: var(--preview-text); }
+.caption { font-family: 'Instrument Sans', sans-serif; font-size: 24px; fill: var(--preview-muted); }
+.route { stroke: var(--preview-accent); stroke-width: 3; fill: none; }
+.orbit { fill: none; stroke: var(--preview-line); stroke-width: 1.5; }
+.carrier { fill: var(--preview-accent); }
+.controls { margin-block: var(--preview-space-lg); }
+.controls button:first-child { border-color: var(--preview-text); }
+.status { color: var(--preview-muted); font-size: var(--preview-small); }
+.directory { max-width: 75rem; margin: var(--preview-space-lg) auto 0; padding-top: var(--preview-space-lg); }
+.directory h2 { font-size: 1.25rem; font-weight: 600; margin: 0 0 var(--preview-space); }
+.directory ul { list-style: none; padding: 0; margin: 0 0 var(--preview-space-lg); }
+.directory li { border-top: 1px solid var(--preview-line); }
+.directory li a { padding-block: var(--preview-space); width: 100%; justify-content: space-between; gap: var(--preview-space); flex-wrap: wrap; text-decoration: none; }
+.directory li a span:last-child { color: var(--preview-muted); font-size: var(--preview-small); }
+.siteLink { gap: var(--preview-space); }
+@media (max-width: 36rem) {
+  .header { align-items: flex-start; }
+  .preferences { gap: 0.5rem; }
+  .preferences label { flex-direction: column; align-items: flex-start; }
+  .directory li a { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
