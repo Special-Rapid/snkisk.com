@@ -1,44 +1,30 @@
-.stage {
-  position: relative;
-  width: 100%;
-  height: 100svh;
-  overflow: hidden;
-  background: linear-gradient(130deg, #075cf2 0%, #5620ee 39%, #e70691 68%, #ff780c 100%);
+.site {
+  --surface:#efeee8; --ink:#191b1b; --muted:#585b57; --divider:#b6b8b1; --media-ground:#e0e2da;
+  --signal:#c73513; --focus:#234ac6; --control-hover:#dddfd6;
+  --space-xs:.4rem; --space-sm:.75rem; --space-md:1.25rem; --space-lg:2rem;
+  --page-space:clamp(1.25rem,5vw,5rem); --text-small:.75rem; --text-body:1rem; --text-title:clamp(1.4rem,2.4vw,2rem);
+  --radius-small:.4rem; --radius-panel:.75rem; --radius-control:2rem; --signal-size:1rem;
+  --font-interface:system-ui,sans-serif; --text-brand:1.5rem; --text-hero:clamp(2.5rem,5.8vw,6rem);
+  --text-section:clamp(2.5rem,8.5vw,8.5rem); --text-project-link:max(.75rem,1em);
+  --weight-display:850; --weight-label:700; --tracking-brand:-.08em; --tracking-display:-.065em;
+  --tracking-title:-.04em; --tracking-label:.08em; --tracking-link:.04em;
+  --leading-display:1; --leading-title:1.2; --leading-copy:1.8; --leading-caption:1.5;
+  --home-ink:#17202d; --home-glow-opacity:1;
+  --home-ground:radial-gradient(circle at 8% 5%,rgba(202,184,255,.74),transparent 21rem),radial-gradient(circle at 89% 2%,rgba(253,190,219,.9),transparent 27rem),#f7f4ef;
+  --home-palette-ground:radial-gradient(circle at 3% 11%,#ffe09e,transparent 25rem),radial-gradient(circle at 100% 55%,#ffb4d2,transparent 31rem),#fff5ee;
+  --target-size:2.75rem; --target-nav-size:3.5rem; --control-gap:.25rem; --control-icon-size:clamp(20px,1.25rem,28px);
+  --film-control-target:44px; --film-control-inset:12px; --film-control-pad-y:6px; --film-control-pad-x:12px; --focus-width:3px; --focus-gap:4px; --focus-inset:-4px;
+  position:relative; min-height:100svh; background:var(--surface); color:var(--ink); font-family:var(--font-interface);
 }
+.site[data-theme='dark'] { --home-ink:#f0f0e8; --home-glow-opacity:.18; --home-ground:#171919; --home-palette-ground:#241f24; --surface:#171919; --ink:#f0f0e8; --muted:#b6b9b1; --divider:#62665e; --media-ground:#292d29; --signal:#ff7953; --focus:#a2baff; --control-hover:#333830; }
+.preferences { display:flex; gap:var(--space-md); flex-wrap:wrap; }
+.preferences label { display:flex; align-items:center; gap:var(--space-xs); font-size:var(--text-small); }
+.preferences select { max-width:100%; min-height:var(--target-size); padding:var(--space-xs); font:inherit; font-size:var(--text-body); background:var(--surface); color:var(--ink); border:1px solid var(--divider); border-radius:var(--radius-small); }
+.preferences select:focus-visible { outline:var(--focus-width) solid var(--focus); outline-offset:var(--focus-gap); }
+@media(max-width:400px) { .preferences { gap:var(--space-sm); }.preferences label{flex-wrap:wrap} }
 
-.frame {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
+@media(max-width:900px) { .site { --text-hero:clamp(2rem,10vw,5rem); } }
 
-.stagePortfolio {
-  height: auto;
-  min-height: 100svh;
-  overflow: visible;
-}
+.site[data-view='film'] { height:100svh; overflow:hidden; }
 
-.portfolioFrame {
-  position: relative;
-  width: 100%;
-  min-height: 100svh;
-}
-
-.siteHandoff {
-  position: absolute;
-  z-index: 30;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  will-change: clip-path, opacity;
-  /* The color bands stay fixed; only the visible area changes during the handoff. */
-  background: linear-gradient(90deg, #fff8f2 0 33.333%, #f77a43 33.333% 66.666%, #2787e8 66.666% 100%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .siteHandoff {
-    clip-path: none !important;
-  }
-}
+.homeFrame { position:relative; z-index:0; }

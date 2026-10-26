@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { copy, type Locale } from './motion-led/copy';
 import styles from './PortfolioHome.module.css';
 
 const PROJECTS = {
@@ -37,11 +38,12 @@ function ExternalLink({ href, children }: { href: string; children: ReactNode })
   return <a className={styles.projectLink} href={href} target="_blank" rel="noreferrer">{children}<span aria-hidden="true">↗</span></a>;
 }
 
-export default function PortfolioHome() {
+export default function PortfolioHome({ locale }: { locale: Locale }) {
+  const text = copy[locale];
   return (
-    <main className={styles.site} aria-label="snkisk project introduction">
+    <div className={styles.site}>
       <header className={styles.siteHeader}>
-        <a className={styles.wordmark} href="#top" aria-label="ページ先頭へ">snkisk</a>
+        <a className={styles.wordmark} href="#top" aria-label={text.top}>snkisk</a>
         <a className={styles.headerJump} href="#projects">PROJECT INDEX <span aria-hidden="true">↓</span></a>
       </header>
 
@@ -49,57 +51,57 @@ export default function PortfolioHome() {
         <p className={styles.eyebrow}>SELECTED WORK / 2026</p>
         <h1 id="portfolio-title">BEYOND<br />THE FRAME.</h1>
         <div className={styles.heroFoot}>
-          <p>フレームの外まで使い心地をつくる、プロダクトとゲームの記録。</p>
+          <p>{text.tagline}</p>
           <a className={styles.heroScroll} href="#projects">VIEW PROJECTS <span aria-hidden="true">↓</span></a>
         </div>
         <div className={styles.heroGlow} aria-hidden="true" />
       </section>
 
-      <div className={styles.projectIndex} id="projects" aria-label="プロジェクト一覧"><span>PROJECT INDEX</span><span>04 SELECTED WORKS</span></div>
+      <div className={styles.projectIndex} id="projects" tabIndex={-1} aria-label={text.index}><span>{text.index}</span><span>04 SELECTED WORKS</span></div>
 
       <section className={`${styles.projectSection} ${styles.goSection}`} aria-labelledby="go-title">
         <div className={styles.sectionNumber}>{PROJECTS.go.id}</div>
         <figure className={styles.projectMedia}>
-          <img src={PROJECT_MEDIA.go.src} alt={PROJECT_MEDIA.go.alt} />
+          <img src={PROJECT_MEDIA.go.src} alt={text.goAlt} />
           <figcaption>{PROJECT_MEDIA.go.label}</figcaption>
         </figure>
         <div className={styles.sectionContent}>
-          <p className={styles.sectionKicker}>ROUTE / IDENTITY / HANDOFF</p><h2 id="go-title">{PROJECTS.go.name}</h2><p className={styles.projectCopy}>{PROJECTS.go.copy}</p><ExternalLink href={PROJECTS.go.href}>{PROJECTS.go.url}</ExternalLink>
+          <p className={styles.sectionKicker}>ROUTE / IDENTITY / HANDOFF</p><h2 id="go-title" tabIndex={-1}>{PROJECTS.go.name}</h2><p className={styles.projectCopy}>{text.goCopy}</p><ExternalLink href={PROJECTS.go.href}>{PROJECTS.go.url}</ExternalLink>
         </div>
       </section>
 
       <section className={`${styles.projectSection} ${styles.legitilsSection}`} aria-labelledby="legitils-title">
         <div className={styles.sectionNumber}>{PROJECTS.legitils.id}</div>
         <figure className={styles.projectMedia}>
-          <img src={PROJECT_MEDIA.legitils.src} alt={PROJECT_MEDIA.legitils.alt} />
+          <img src={PROJECT_MEDIA.legitils.src} alt={text.legitilsAlt} />
           <figcaption>{PROJECT_MEDIA.legitils.label}</figcaption>
         </figure>
         <div className={styles.sectionContent}>
-          <p className={styles.sectionKicker}>SIGNAL / OBSERVATION / PLAY</p><h2 id="legitils-title">{PROJECTS.legitils.name}</h2><p className={styles.projectCopy}>{PROJECTS.legitils.copy}</p><ExternalLink href={PROJECTS.legitils.href}>{PROJECTS.legitils.url}</ExternalLink>
+          <p className={styles.sectionKicker}>SIGNAL / OBSERVATION / PLAY</p><h2 id="legitils-title" tabIndex={-1}>{PROJECTS.legitils.name}</h2><p className={styles.projectCopy}>{text.legitilsCopy}</p><ExternalLink href={PROJECTS.legitils.href}>{PROJECTS.legitils.url}</ExternalLink>
         </div>
       </section>
 
       <section className={`${styles.projectSection} ${styles.minecraftSection}`} aria-labelledby="minecraft-title">
         <div className={styles.sectionNumber}>{PROJECTS.minecraft.id}</div>
         <figure className={styles.projectMedia}>
-          <img src={PROJECT_MEDIA.minecraft.src} alt={PROJECT_MEDIA.minecraft.alt} />
+          <img src={PROJECT_MEDIA.minecraft.src} alt={text.minecraftAlt} />
           <figcaption>{PROJECT_MEDIA.minecraft.label}</figcaption>
         </figure>
         <div className={styles.sectionContent}>
-          <p className={styles.sectionKicker}>WORLD / SYSTEM / PRODUCTION</p><h2 id="minecraft-title">MINECRAFT<br />PRODUCTION</h2><p className={styles.projectCopy}>{PROJECTS.minecraft.copy}</p><ExternalLink href={PROJECTS.minecraft.href}>{PROJECTS.minecraft.url}</ExternalLink>
+          <p className={styles.sectionKicker}>WORLD / SYSTEM / PRODUCTION</p><h2 id="minecraft-title" tabIndex={-1}>MINECRAFT<br />PRODUCTION</h2><p className={styles.projectCopy}>{text.minecraftCopy}</p><ExternalLink href={PROJECTS.minecraft.href}>{PROJECTS.minecraft.url}</ExternalLink>
         </div>
       </section>
 
       <section className={`${styles.projectSection} ${styles.hensyokuSection}`} aria-labelledby="hensyoku-title">
         <div className={styles.sectionNumber}>{PROJECTS.hensyoku.id}</div>
-        <div className={styles.hensyokuIntro}><p className={styles.sectionKicker}>FOOD / CONDITIONS / TOGETHER</p><h2 id="hensyoku-title">偏食、<br /><em>治さなくていい。</em></h2><p className={styles.projectCopy}>{PROJECTS.hensyoku.copy}</p><ExternalLink href={PROJECTS.hensyoku.href}>{PROJECTS.hensyoku.url}</ExternalLink></div>
-        <div className={styles.screenGallery} aria-label="偏食メイトのリリース済み画面">
-          {HENSYOKU_DESKTOP_SCREENS.map((screen) => <figure className={styles.screenCard} key={screen.label}><img src={screen.src} alt={screen.alt} /><figcaption>{screen.label}</figcaption></figure>)}
+        <div className={styles.hensyokuIntro}><p className={styles.sectionKicker}>FOOD / CONDITIONS / TOGETHER</p><h2 id="hensyoku-title" tabIndex={-1}>{text.hensyokuTitle}<br /><em>{text.hensyokuEm}</em></h2><p className={styles.projectCopy}>{text.hensyokuCopy}</p><ExternalLink href={PROJECTS.hensyoku.href}>{PROJECTS.hensyoku.url}</ExternalLink></div>
+        <div className={styles.screenGallery} aria-label={text.gallery}>
+          {HENSYOKU_DESKTOP_SCREENS.map((screen, index) => <figure className={styles.screenCard} key={screen.label}><img src={screen.src} alt={text.screenAlts[index]} /><figcaption>{screen.label}</figcaption></figure>)}
         </div>
-        <p className={styles.hensyokuNotice}>候補は参考情報です。アレルギーなど安全に関わる内容は提供元・店舗で確認します。</p>
+        <p className={styles.hensyokuNotice}>{text.notice}</p>
       </section>
 
-      <footer className={styles.footer}><p>snkisk / selected work</p><a href="#top">BACK TO TOP <span aria-hidden="true">↑</span></a></footer>
-    </main>
+      <footer className={styles.footer}><p>snkisk / selected work</p><a href="#top">{text.back} <span aria-hidden="true">↑</span></a></footer>
+    </div>
   );
 }

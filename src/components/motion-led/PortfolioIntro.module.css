@@ -1,0 +1,18 @@
+.player { position:relative; height:100svh; background:var(--surface); color:var(--ink); }
+.player[data-home='true'] { height:auto; }
+.viewport { height:100%; min-width:0; overflow:hidden; }
+.viewport[hidden] { display:none; }
+.viewport svg { display:block; }
+.transport { position:absolute; z-index:4; top:max(var(--film-control-inset),env(safe-area-inset-top)); right:max(var(--film-control-inset),env(safe-area-inset-right)); display:flex; justify-content:flex-end; flex-wrap:wrap; gap:var(--space-xs); max-width:calc(100% - 2 * var(--film-control-inset)); font-size:var(--text-small); }
+.playbackControls { display:flex; align-items:flex-start; justify-content:flex-end; gap:var(--control-gap); flex-wrap:wrap; }
+.transport button,.transport summary { min-height:var(--film-control-target); display:inline-flex; align-items:center; gap:var(--space-xs); padding:var(--film-control-pad-y) var(--film-control-pad-x); color:var(--ink); background:var(--surface); border:1px solid var(--divider); border-radius:var(--radius-small); font:inherit; cursor:pointer; }
+.transport .iconButton { min-width:var(--film-control-target); justify-content:center; padding:var(--film-control-pad-y); }
+.iconButton svg { width:var(--control-icon-size); height:var(--control-icon-size); }
+.transport button:focus-visible,.projects summary:focus-visible,.projects a:focus-visible { outline:var(--focus-width) solid var(--focus); outline-offset:var(--focus-gap); }
+.projects { position:relative; }
+.panel { position:absolute; right:0; z-index:5; width:min(23rem,calc(100vw - 2 * var(--space-sm))); max-height:min(65svh,max(var(--target-size),calc(100svh - 2 * var(--target-size) - 4 * var(--space-sm)))); overflow-y:auto; display:grid; gap:var(--space-md); padding:var(--space-sm); background:var(--surface); color:var(--ink); border:1px solid var(--divider); border-radius:var(--radius-small); }
+.projects nav { display:grid; }
+.projects a { display:flex; align-items:center; min-height:var(--target-size); padding:var(--space-sm); color:inherit; overflow-wrap:anywhere; }
+.handoff { position:fixed; z-index:3; inset:0; pointer-events:none; background:linear-gradient(90deg,#fff8f2 0 33.333%,#f77a43 33.333% 66.666%,#2787e8 66.666% 100%); }
+.srOnly { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.player[data-home='true'] .transport { position:relative; top:auto; right:auto; width:max-content; margin-left:auto; margin-right:var(--space-sm); padding:var(--space-sm) 0; }
