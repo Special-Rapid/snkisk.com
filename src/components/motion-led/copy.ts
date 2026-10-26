@@ -4,9 +4,9 @@ export const copy = {
   ja: {
     film: 'snkiskのプロジェクト・モーショングラフィック',
     theme: 'テーマ', language: '言語', system: 'システム', light: 'ライト', dark: 'ダーク',
-    pause: '一時停止', resume: '再生する', replay: 'もう一度見る', skip: '制作物を見る',
+    pause: '一時停止', resume: '再生する', replay: 'もう一度見る', skip: '制作物を見る', skipShort: 'スキップ', skipAction: 'スキップして制作物を見る',
     running: '再生中', paused: '一時停止中', ended: '再生完了', reduced: '動きを減らして表示中',
-    index: '制作物一覧', top: 'ページ先頭へ', back: '先頭へ戻る', selected: 'SELECTED WORK / 2026',
+    index: '制作物一覧', menu: 'メニュー', top: 'ページ先頭へ', back: '先頭へ戻る', selected: 'SELECTED WORK / 2026',
     tagline: 'フレームの外まで使い心地をつくる、プロダクトとゲームの記録。',
     goRole: '必要な案内へ、ひとつのリンクで。', legitilsRole: 'Minecraft のプレイを見守る。',
     minecraftRole: 'ゲームの世界を、体験にする。', hensyokuRole: '食べられるものから、ごはんを選ぶ。',
@@ -23,9 +23,9 @@ export const copy = {
   en: {
     film: 'snkisk project motion graphics',
     theme: 'Theme', language: 'Language', system: 'System', light: 'Light', dark: 'Dark',
-    pause: 'Pause', resume: 'Resume', replay: 'Replay', skip: 'View projects',
+    pause: 'Pause', resume: 'Resume', replay: 'Replay', skip: 'View projects', skipShort: 'Skip', skipAction: 'Skip to projects',
     running: 'Playing', paused: 'Paused', ended: 'Finished', reduced: 'Reduced motion',
-    index: 'Project index', top: 'Back to top', back: 'Back to top', selected: 'SELECTED WORK / 2026',
+    index: 'Project index', menu: 'Menu', top: 'Back to top', back: 'Back to top', selected: 'SELECTED WORK / 2026',
     tagline: 'Products and games, with care for the experience beyond the frame.',
     goRole: 'One link to the right destination.', legitilsRole: 'Observe Minecraft play.',
     minecraftRole: 'Turn game worlds into experiences.', hensyokuRole: 'Choose meals from what you can eat.',

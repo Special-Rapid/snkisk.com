@@ -1,10 +1,50 @@
 /** All narrative geometry, text reveals and the final fixed-colour handoff share this clock. */
-export const DURATION = 17400;
-export const HOME_AT = 16600;
+export const DURATION = 12950;
+export const HOME_AT = 12250;
+const STORY_DURATION = 17400;
+const STORY_HOME_AT = 16600;
+// Per-scene editorial timings retain reading intervals without a uniform speed multiplier.
+const BEATS = [[0, 0], [2600, 3300], [5300, 6800], [9300, 11700], [10800, 13590], [11700, 16000], [HOME_AT, STORY_HOME_AT], [DURATION, STORY_DURATION]] as const;
+/** Authored story intervals after the motion settles and before the next movement. */
+export const READING_HOLDS = { go: [1200, 2300], legitils: [5600, 6800], minecraft: [10300, 11400], hensyoku: [13590, 16000] } as const;
+const rates = BEATS.slice(1).map(([clock, story], i) => (story - BEATS[i][1]) / (clock - BEATS[i][0]));
+const beatRate = (i: number) => i === 0 ? rates[0] : i === BEATS.length - 1 ? rates[rates.length - 1] : 2 * rates[i - 1] * rates[i] / (rates[i - 1] + rates[i]);
+export function storyTime(clock: number) {
+  const t = Math.max(0, Math.min(DURATION, clock));
+  for (let i = 1; i < BEATS.length; i++) {
+    const [start, storyStart] = BEATS[i - 1], [end, storyEnd] = BEATS[i];
+    if (t <= end) {
+      const duration = end - start, u = (t - start) / duration, u2 = u * u, u3 = u2 * u;
+      return (2*u3 - 3*u2 + 1)*storyStart + (u3 - 2*u2 + u)*duration*beatRate(i - 1)
+        + (-2*u3 + 3*u2)*storyEnd + (u3 - u2)*duration*beatRate(i);
+    }
+  }
+  return STORY_DURATION;
+}
+/** Used for annotations and tests that refer to an authored narrative beat. */
+export function clockAt(story: number) {
+  const t = Math.max(0, Math.min(STORY_DURATION, story));
+  if (t === 0) return 0;
+  if (t === STORY_DURATION) return DURATION;
+  let low = 0, high = DURATION;
+  for (let i = 0; i < 48; i++) { const middle = (low + high) / 2; if (storyTime(middle) < t) low = middle; else high = middle; }
+  return (low + high) / 2;
+}
 export const clamp = (value: number) => Math.max(0, Math.min(1, value));
 export const phase = (time: number, start: number, end: number) => clamp((time - start) / (end - start));
 export const ease = (time: number, start: number, end: number) => {
   const t = phase(time, start, end); return t * t * (3 - 2 * t);
+};
+// All profiles have zero endpoint velocity. A stronger travel peak and asymmetric
+// settling/departure distinguish distance, form changes and outgoing typography.
+export const travelEase = (time: number, start: number, end: number) => {
+  const t = phase(time, start, end), a = t * t, b = (1 - t) ** 2; return a / (a + b);
+};
+export const settleEase = (time: number, start: number, end: number) => {
+  const t = phase(time, start, end), a = t * t, b = (1 - t) ** 3; return a / (a + b);
+};
+export const departureEase = (time: number, start: number, end: number) => {
+  const t = phase(time, start, end), a = t ** 3, b = (1 - t) ** 2; return a / (a + b);
 };
 export const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 export const mixColour = (a: string, b: string, t: number) => {
@@ -26,18 +66,19 @@ const tweenShape = (a: Shape, b: Shape, t: number): Shape => ({
   radius: mix(a.radius, b.radius, t), angle: mix(a.angle, b.angle, t),
 });
 export function pose(inputTime: number, height = 620) {
-  const time = Math.max(0, Math.min(DURATION, inputTime));
+  const clock = Math.max(0, Math.min(DURATION, inputTime));
+  const time = storyTime(clock);
   const portrait = height > 900;
   const routeY = height * (portrait ? .61 : .57);
   const discY = height * (portrait ? .53 : .52);
   const blockY = height * (portrait ? .72 + .04 * (1 - phase(height, 901, 1300)) : .55);
   const paletteY = height * (portrait ? .60 : .70);
-  const contract = ease(time, 2150, 2750), travel = ease(time, 2600, 3300);
-  const expand = ease(time, 3300, 4300), square = ease(time, 6800, 7700);
-  const split = ease(time, 7550, 8350), palette = ease(time, 11700, 13100);
-  const pill: Shape = { x: mix(-170, 540, ease(time, 0, 900)), y: routeY, w: mix(portrait ? 360 : 278, 32, contract), h: mix(76, 32, contract), radius: mix(38, 16, contract), angle: 0 };
+  const contract = settleEase(time, 2300, 2800), travel = travelEase(time, 2600, 3300);
+  const expand = settleEase(time, 3300, 4300), square = travelEase(time, 6800, 7700);
+  const split = settleEase(time, 7550, 8350), palette = settleEase(time, 11700, 13100);
+  const pill: Shape = { x: mix(-170, 540, settleEase(time, 0, 900)), y: routeY, w: mix(portrait ? 360 : 278, 32, contract), h: mix(76, 32, contract), radius: mix(38, 16, contract), angle: 0 };
   pill.x = mix(pill.x, 850, travel);
-  const discMotion = Math.sin(phase(time, 4300, 6800) * Math.PI);
+  const discMotion = Math.sin(ease(time, 4300, 5600) * Math.PI);
   const discWidth = 365 + 34 * discMotion;
   const disc: Shape = { x: (portrait ? 500 : 565) + 28 * discMotion, y: discY - 18 * discMotion, w: discWidth, h: 365 - 18 * discMotion, radius: 182.5, angle: 0 };
   const blockSize = portrait ? Math.min(278, height * .22) : 240;
@@ -49,14 +90,14 @@ export function pose(inputTime: number, height = 620) {
   coreFill = mixColourString(coreFill, cores[2], square);
   coreFill = mixColourString(coreFill, cores[3], palette);
   const size = core.w / 2;
-  const scribeLift = portrait ? 0 : ease(time, 7650, 7900);
-  const scribeSweep = ease(time, portrait ? 7650 : 7900, portrait ? 8350 : 8550);
-  const scribeReturn = ease(time, portrait ? 8350 : 8550, 9300);
-  const scribeDock = portrait ? 0 : ease(time, 9300, 9700);
+  const scribeLift = portrait ? 0 : settleEase(time, 7650, 7900);
+  const scribeSweep = travelEase(time, portrait ? 7650 : 7900, portrait ? 8350 : 8550);
+  const scribeReturn = settleEase(time, portrait ? 8350 : 8550, 9300);
+  const scribeDock = portrait ? 0 : settleEase(time, 9300, 9700);
   const laneSize = Math.min(64, height * .1), laneEnd = laneSize / 2 + 8;
   const parts: Part[] = Array.from({ length: 4 }, (_, i) => {
     const sx = i % 2 === 0 ? -1 : 1, sy = i < 2 ? -1 : 1;
-    const assembly = Math.sin(phase(time, 8350, 11700) * Math.PI);
+    const assembly = Math.sin(ease(time, 8350, 10300) * Math.PI);
     const radians = core.angle * Math.PI / 180;
     const dx = sx * size / 2, dy = sy * size / 2;
     const p: Shape = {
@@ -95,15 +136,15 @@ export function pose(inputTime: number, height = 620) {
   ground = colourTurn < .5 ? mixColourString(ground, FILM.transitionPaper, colourTurn * 2) : mixColour(FILM.transitionPaper, FILM.blockGround, colourTurn * 2 - 1);
   ground = mixColourString(ground, FILM.paletteGround, ease(time, 11700, 13000));
   return {
-    time, portrait, height, core, parts, coreFill, ground, coreOpacity: 1 - split,
+    time, clock, portrait, height, core, parts, coreFill, ground, coreOpacity: 1 - split,
     routeY, blockRevealEdge, scribeSweep, scribeReturn, camera: { pan, scale },
-    opening: 1 - ease(time, 0, 1050), routeDraw: ease(time, 600, 1850), contract, travel, expand, square, split, palette,
-    goType: 1 - ease(time, 2850, 3350), goExit: ease(time, 2850, 3600),
-    legitType: ease(time, 3750, 4350) * (1 - ease(time, 6900, 7450)), legitExit: ease(time, 6850, 7550),
-    blockType: Math.min(1, scribeSweep*4) * (1 - ease(time, 11500, 12100)), blockExit: ease(time, 11400, 12200),
+    opening: 1 - ease(time, 0, 1050), routeDraw: ease(time, 600, 1200), contract, travel, expand, square, split, palette,
+    goType: 1 - ease(time, 2850, 3350), goExit: departureEase(time, 2850, 3600),
+    legitType: ease(time, 3750, 4350) * (1 - ease(time, 6900, 7450)), legitExit: departureEase(time, 6850, 7550),
+    blockType: Math.min(1, scribeSweep*4) * (1 - ease(time, 11500, 12100)), blockExit: departureEase(time, 11400, 12200),
     paletteType: ease(time, 12400, 13200),
-    handoffCover: ease(time, 16000, HOME_AT), handoffReveal: ease(time, HOME_AT, DURATION),
-    showHome: time >= HOME_AT, finished: time >= DURATION,
+    handoffCover: ease(time, 16000, STORY_HOME_AT), handoffReveal: ease(time, STORY_HOME_AT, STORY_DURATION),
+    showHome: clock >= HOME_AT, finished: clock >= DURATION,
   };
 }
 function mixColourString(a: string, b: string, t: number) {

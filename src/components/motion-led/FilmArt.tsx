@@ -15,10 +15,10 @@ export default function FilmArt({ time, height = 620, locale }: { time: number; 
   const display = { fontFamily: FILM.fontDisplay, fontWeight: FILM.displayWeight, letterSpacing: FILM.displayTracking };
   const bandShift = p.expand * 260 - p.square * 110 + p.palette * 140;
   const routeTail = (1 - p.square) * p.routeDraw;
-  const clipX = mix(face.x - face.w / 2, 0, ease(time, 3900, 4500));
-  const clipY = mix(face.y - face.h / 2, 0, ease(time, 3900, 4500));
-  const clipW = mix(face.w, 1000, ease(time, 3900, 4500));
-  const clipH = mix(face.h, h, ease(time, 3900, 4500));
+  const clipX = mix(face.x - face.w / 2, 0, ease(p.time, 3900, 4500));
+  const clipY = mix(face.y - face.h / 2, 0, ease(p.time, 3900, 4500));
+  const clipW = mix(face.w, 1000, ease(p.time, 3900, 4500));
+  const clipH = mix(face.h, h, ease(p.time, 3900, 4500));
   return <svg viewBox={`0 0 1000 ${h}`} width="100%" height="100%" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" data-film-art="true">
     <defs>
       <BrandDefinitions/>
@@ -83,7 +83,7 @@ export default function FilmArt({ time, height = 620, locale }: { time: number; 
       </g>
     </g>
     {/* Only the initial entry uses the original full-frame coloured bands. */}
-    <g opacity={p.opening} transform={`translate(0 ${-ease(time,0,1050)*h})`}>
+    <g opacity={p.opening} transform={`translate(0 ${-ease(p.time,0,1050)*h})`}>
       {[FILM.cyan,FILM.route,FILM.flagShape,FILM.pink,FILM.orange].map((fill,i)=><path key={fill} d={`M ${i*230-300} -100 H ${i*230+150} L ${i*230+550} ${h+100} H ${i*230+100} Z`} fill={fill}/>)}
     </g>
   </svg>;

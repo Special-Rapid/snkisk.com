@@ -61,21 +61,27 @@ export default function PortfolioIntro({ text, locale, reduced, pauseSignal, onH
     </div>
     <div className={styles.transport}>
       <div className={styles.playbackControls}>
-        {!reduced && <button type="button" onClick={play}>{finished ? text.replay : paused || hidden ? text.resume : text.pause}</button>}
-        <button type="button" onClick={skip}>{text.skip} <span aria-hidden="true">↓</span></button>
-        <span role="status" className={styles.status}>{status}</span>
+        {!reduced && <button type="button" className={styles.iconButton} onClick={play} aria-label={finished ? text.replay : paused || hidden ? text.resume : text.pause} title={finished ? text.replay : paused || hidden ? text.resume : text.pause}>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            {finished ? <path d="M5 9a7 7 0 1 1 1 7M5 5v4h4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/> : paused || hidden ? <path d="M8 4v16l12-8z" fill="currentColor"/> : <path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/>}
+          </svg>
+        </button>}
+        <button type="button" onClick={skip} aria-label={text.skipAction}>{text.skipShort} <span aria-hidden="true">↓</span></button>
+        <span role="status" className={styles.srOnly}>{status}</span>
       </div>
-      <details className={styles.projects} onFocusCapture={() => setPaused(true)} onToggle={event => { if (event.currentTarget.open) setPaused(true); }}>
-        <summary>{text.index}</summary>
-        <nav aria-label={text.index}>
-          <a href="https://go.snkisk.com/" target="_blank" rel="noreferrer">Go / Link Shortener ↗</a>
-          <a href="https://lmp.snkisk.com/" target="_blank" rel="noreferrer">Legitils ↗</a>
-          <a href="https://mc.snkisk.com/" target="_blank" rel="noreferrer">Minecraft Production ↗</a>
-          <a href="https://hensyoku-mate.snkisk.com/" target="_blank" rel="noreferrer">{text.hensyokuName} ↗</a>
-        </nav>
+      <details className={styles.projects} hidden={!homeVisible} onFocusCapture={() => setPaused(true)} onToggle={event => { if (event.currentTarget.open) setPaused(true); }}>
+        <summary>{text.menu} <span aria-hidden="true">⌄</span></summary>
+        <div className={styles.panel}>
+          <nav aria-label={text.index}>
+            <a href="https://go.snkisk.com/" target="_blank" rel="noreferrer">Go / Link Shortener ↗</a>
+            <a href="https://lmp.snkisk.com/" target="_blank" rel="noreferrer">Legitils ↗</a>
+            <a href="https://mc.snkisk.com/" target="_blank" rel="noreferrer">Minecraft Production ↗</a>
+            <a href="https://hensyoku-mate.snkisk.com/" target="_blank" rel="noreferrer">{text.hensyokuName} ↗</a>
+          </nav>
+          {children}
+        </div>
       </details>
-      {children}
     </div>
-    {elapsed >= 16000 && elapsed < DURATION && !reduced && <div data-handoff-plane="true" className={styles.handoff} aria-hidden="true" style={{ clipPath: elapsed < HOME_AT ? `inset(${(1-frame.handoffCover)*100}% 0 0 0)` : `inset(0 0 ${frame.handoffReveal*100}% 0)` }}/>}
+    {frame.time >= 16000 && elapsed < DURATION && !reduced && <div data-handoff-plane="true" className={styles.handoff} aria-hidden="true" style={{ clipPath: elapsed < HOME_AT ? `inset(${(1-frame.handoffCover)*100}% 0 0 0)` : `inset(0 0 ${frame.handoffReveal*100}% 0)` }}/>}
   </section>;
 }
