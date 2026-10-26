@@ -42,6 +42,21 @@ export default function PortfolioHome({ locale }: { locale: Locale }) {
   const text = copy[locale];
   return (
     <div className={styles.site}>
+      <header className={styles.siteHeader}>
+        <a className={styles.wordmark} href="#top" aria-label={text.top}>snkisk</a>
+        <a className={styles.headerJump} href="#projects">PROJECT INDEX <span aria-hidden="true">↓</span></a>
+      </header>
+
+      <section className={styles.hero} id="top" aria-labelledby="portfolio-title">
+        <p className={styles.eyebrow}>SELECTED WORK / 2026</p>
+        <h1 id="portfolio-title">BEYOND<br />THE FRAME.</h1>
+        <div className={styles.heroFoot}>
+          <p>{text.tagline}</p>
+          <a className={styles.heroScroll} href="#projects">VIEW PROJECTS <span aria-hidden="true">↓</span></a>
+        </div>
+        <div className={styles.heroGlow} aria-hidden="true" />
+      </section>
+
       <div className={styles.projectIndex} id="projects" tabIndex={-1} aria-label={text.index}><span>{text.index}</span><span>04 SELECTED WORKS</span></div>
 
       <section className={`${styles.projectSection} ${styles.goSection}`} aria-labelledby="go-title">

@@ -23,10 +23,9 @@ export function usePreferences() {
   useEffect(() => { const update = () => setOsLanguage(navigator.language); window.addEventListener('languagechange', update); return () => window.removeEventListener('languagechange', update); }, []);
   useEffect(() => {
     const root = document.documentElement; const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-    root.dataset.siteStage = 'home'; document.body.dataset.siteStage = 'home';
     root.dataset.portfolioTheme = resolvedTheme; root.lang = locale; root.dir = 'ltr'; root.style.colorScheme = resolvedTheme;
     if (meta) meta.content = resolvedTheme === 'dark' ? '#171919' : '#efeee8';
-    return () => { delete root.dataset.portfolioTheme; delete root.dataset.siteStage; delete document.body.dataset.siteStage; };
+    return () => { delete root.dataset.portfolioTheme; };
   }, [locale, resolvedTheme]);
   return { theme, setTheme, language, setLanguage, locale, resolvedTheme };
 }

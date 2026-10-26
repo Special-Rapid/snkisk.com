@@ -14,13 +14,19 @@
 @media (max-width:760px) { .siteHeader{padding:1.2rem}.headerJump{font-size:.57rem}.hero{min-height:44rem;padding:8rem 1.2rem 2rem}.hero h1{font-size:clamp(4.65rem,23vw,7.3rem)}.heroFoot{display:grid;margin-top:3.3rem;gap:1.4rem;align-items:start}.hero::before{right:-60vw;bottom:-11rem;width:37rem}.hero::after{top:20%;right:10%}.projectSection{min-height:39rem;padding:5rem 1.2rem}.sectionContent h2,.hensyokuIntro h2{font-size:clamp(3.8rem,18vw,5.8rem)}.projectMedia::after{background:linear-gradient(90deg,rgba(7,10,16,.9),rgba(7,10,16,.54) 100%)}.projectMedia img,.legitilsSection .projectMedia img,.minecraftSection .projectMedia img{object-position:center}.projectMedia figcaption{right:1.2rem;bottom:1.2rem;font-size:.53rem}.hensyokuSection{padding-bottom:4.5rem}.screenGallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.screenCard{border-radius:1.05rem}.footer{padding:1.4rem 1.2rem} }
 @media (prefers-reduced-motion:reduce) { .projectLink{transition:none} }
 
-/* The project media retain their own photographic contrast; page surfaces follow the site preference. */
-.site { --ink:inherit; color:inherit; background:var(--surface); --line:var(--divider); }
-.hensyokuSection { background:var(--surface); }
-.hensyokuNotice { color:inherit; border-color:var(--divider); }
+/* Restore the original introduction site's visual hierarchy; only preference variants and reachability are added. */
+.site { --ink:var(--home-ink); --line:var(--divider); color:var(--home-ink); background:var(--home-ground); }
+.hero::before,.hero::after,.heroGlow { opacity:var(--home-glow-opacity); }
+.hensyokuSection { background:var(--home-palette-ground); }
+.hensyokuNotice { color:var(--home-ink); border-color:var(--divider); }
 .projectIndex:focus-visible,.projectSection h2:focus-visible { outline:var(--focus-width) solid var(--focus); outline-offset:var(--focus-inset); }
 .projectLink { overflow-wrap:anywhere; font-size:var(--text-project-link); letter-spacing:var(--tracking-link); max-width:100%; }
 .screenCard figcaption { max-width:calc(100% - 1.4rem); overflow-wrap:anywhere; }
 .sectionContent h2,.hensyokuIntro h2 { overflow-wrap:anywhere; font-size:var(--text-section); line-height:var(--leading-display); }
 .footer { flex-wrap:wrap; gap:var(--space-md); }
 .footer a { min-height:var(--target-size); display:inline-flex; align-items:center; }
+
+.hero h1 { overflow-wrap:anywhere; max-width:100%; }
+.siteHeader { flex-wrap:wrap; gap:var(--space-sm); }
+.headerJump { min-height:var(--target-size); }
+.wordmark:focus-visible,.headerJump:focus-visible,.heroScroll:focus-visible,.footer a:focus-visible { outline-color:var(--focus); }

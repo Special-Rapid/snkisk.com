@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PortfolioHome from './components/PortfolioHome';
 import PortfolioIntro from './components/motion-led/PortfolioIntro';
 import { copy } from './components/motion-led/copy';
@@ -18,20 +18,26 @@ const SHORTCUT_DESTINATIONS: Record<string, string> = {
 
 function PortfolioSite() {
   const preferences = usePreferences();
+  const reduced = useMedia('(prefers-reduced-motion: reduce)');
+  const [showHome, setShowHome] = useState(reduced);
   const [pauseSignal, setPauseSignal] = useState(0);
   const pause = () => setPauseSignal(value => value + 1);
-  const reduced = useMedia('(prefers-reduced-motion: reduce)');
+  const onHome = useCallback(() => setShowHome(true), []);
+  const onReplay = useCallback(() => setShowHome(false), []);
   const text = copy[preferences.locale];
-  return <main className={styles.site} data-theme={preferences.resolvedTheme} aria-label={text.overview}>
-    <header className={styles.siteHeader} onFocusCapture={pause}>
-      <a href="#top" className={styles.wordmark} aria-label={text.top}>snkisk</a>
-      <div className={styles.preferences}>
+  useEffect(() => {
+    document.documentElement.dataset.siteStage = showHome ? 'home' : 'reel';
+    document.body.dataset.siteStage = showHome ? 'home' : 'reel';
+    return () => { delete document.documentElement.dataset.siteStage; delete document.body.dataset.siteStage; };
+  }, [showHome]);
+  return <main className={styles.site} data-theme={preferences.resolvedTheme} data-view={showHome ? 'home' : 'film'} aria-label={text.overview}>
+    <PortfolioIntro text={text} locale={preferences.locale} reduced={reduced} pauseSignal={pauseSignal} onHome={onHome} onReplay={onReplay} homeVisible={showHome}>
+      <div className={styles.preferences} onFocusCapture={pause}>
         <label>{text.theme}<select value={preferences.theme} onChange={event => { const value = event.target.value as Theme; preferences.setTheme(value); savePreference('snkisk-site-theme-v1', value); }}><option value="system">{text.system}</option><option value="light">{text.light}</option><option value="dark">{text.dark}</option></select></label>
         <label>{text.language}<select value={preferences.language} onChange={event => { const value = event.target.value as Language; preferences.setLanguage(value); savePreference('snkisk-site-language-v1', value); }}><option value="system">{text.system}</option><option value="ja">日本語</option><option value="en">English</option></select></label>
       </div>
-    </header>
-    <PortfolioIntro text={text} reduced={reduced} pauseSignal={pauseSignal} />
-    <div onFocusCapture={pause}><PortfolioHome locale={preferences.locale} /></div>
+    </PortfolioIntro>
+    <div className={styles.homeFrame} hidden={!showHome} onFocusCapture={pause}><PortfolioHome locale={preferences.locale}/></div>
   </main>;
 }
 export default function App() {

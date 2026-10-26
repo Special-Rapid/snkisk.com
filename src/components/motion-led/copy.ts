@@ -2,6 +2,7 @@ export type Locale = 'ja' | 'en';
 export const resolveLocale = (value: string): Locale => value.toLowerCase().split('-')[0] === 'en' ? 'en' : 'ja';
 export const copy = {
   ja: {
+    film: 'snkiskのプロジェクト・モーショングラフィック',
     theme: 'テーマ', language: '言語', system: 'システム', light: 'ライト', dark: 'ダーク',
     pause: '一時停止', resume: '再生する', replay: 'もう一度見る', skip: '制作物を見る',
     running: '再生中', paused: '一時停止中', ended: '再生完了', reduced: '動きを減らして表示中',
@@ -20,6 +21,7 @@ export const copy = {
     gallery: '偏食メイトのリリース済み画面', overview: 'プロダクトとゲームの制作物紹介',
   },
   en: {
+    film: 'snkisk project motion graphics',
     theme: 'Theme', language: 'Language', system: 'System', light: 'Light', dark: 'Dark',
     pause: 'Pause', resume: 'Resume', replay: 'Replay', skip: 'View projects',
     running: 'Playing', paused: 'Paused', ended: 'Finished', reduced: 'Reduced motion',
@@ -39,3 +41,11 @@ export const copy = {
   },
 } as const;
 export type SiteCopy = (typeof copy)[Locale];
+
+// Typography authored in the accepted English film mocks remains English in either locale.
+// Utility controls, project explanations and the Hensyoku message are localized above.
+export const FILM_COPY = {
+  routeFirst: 'ONE LINK', routeSecond: '/ MANY WAYS', flagFirst: 'FLAG', flagSecond: 'NOW',
+  buildFirst: 'BUILD', buildSecond: '/ THE NEXT', buildThird: 'BLOCK',
+  legitils: 'Legitils', minecraft: 'Minecraft Production', routeAddress: 'go.snkisk.com',
+} as const;
