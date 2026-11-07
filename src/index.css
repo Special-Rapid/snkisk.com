@@ -76,3 +76,8 @@ button {
 html[data-site-stage='home'] #root {
   height: auto;
 }
+
+/* Main site is usable before media decode and scrolls from its first frame. */
+html[data-portfolio-theme='light'],body[data-site-stage='home'] { background:#efeee8; }
+html[data-portfolio-theme='dark'],html[data-portfolio-theme='dark'] body { background:#171919; }
+html[data-portfolio-theme] { scroll-behavior:auto; }

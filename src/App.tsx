@@ -1,10 +1,9 @@
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
 import PortfolioHome from './components/PortfolioHome';
-import PortfolioSequence from './components/PortfolioSequence';
+import PortfolioIntro from './components/motion-led/PortfolioIntro';
+import { copy } from './components/motion-led/copy';
+import { usePreferences, useMedia, savePreference, type Theme, type Language } from './components/motion-led/preferences';
 import styles from './App.module.css';
-
-type Stage = 'reel' | 'closing' | 'home';
 
 const SHORTCUT_DESTINATIONS: Record<string, string> = {
   '/h': 'https://hensyoku-mate.snkisk.com/',
@@ -17,103 +16,32 @@ const SHORTCUT_DESTINATIONS: Record<string, string> = {
   '/hf': 'https://hensyoku-mate.snkisk.com/contact/',
 };
 
-type SiteHandoffProps = {
-  phase: 'cover' | 'reveal';
-  reduceMotion: boolean;
-  onCovered: () => void;
-};
-
-function SiteHandoff({ phase, reduceMotion, onCovered }: SiteHandoffProps) {
-  const isCover = phase === 'cover';
-
+function PortfolioSite() {
+  const preferences = usePreferences();
+  const reduced = useMedia('(prefers-reduced-motion: reduce)');
+  const [showHome, setShowHome] = useState(reduced);
+  const [pauseSignal, setPauseSignal] = useState(0);
+  const pause = () => setPauseSignal(value => value + 1);
+  const onHome = useCallback(() => setShowHome(true), []);
+  const onReplay = useCallback(() => setShowHome(false), []);
+  const text = copy[preferences.locale];
   useEffect(() => {
-    if (!isCover) {
-      return;
-    }
-
-    // Switch only after the final slat has fully covered the outgoing Hensyoku Mate frame.
-    const timeoutId = window.setTimeout(onCovered, reduceMotion ? 190 : 760);
-    return () => window.clearTimeout(timeoutId);
-  }, [isCover, onCovered, reduceMotion]);
-
-  return (
-    <motion.div
-      className={styles.siteHandoff}
-      aria-hidden="true"
-      initial={reduceMotion ? { opacity: 1 } : { clipPath: isCover ? 'inset(100% 0 0 0)' : 'inset(0)' }}
-      animate={
-        reduceMotion
-          ? { opacity: isCover ? 1 : 0 }
-          : isCover
-            ? { clipPath: 'inset(0)' }
-            : { clipPath: ['inset(0)', 'inset(0)', 'inset(0 0 100% 0)'] }
-      }
-      transition={{ duration: isCover ? (reduceMotion ? 0.18 : 0.58) : (reduceMotion ? 0.22 : 1.74), times: isCover ? undefined : reduceMotion ? undefined : [0, 0.86, 1], ease: [0.18, 0.89, 0.32, 1] }}
-    />
-  );
+    document.documentElement.dataset.siteStage = showHome ? 'home' : 'reel';
+    document.body.dataset.siteStage = showHome ? 'home' : 'reel';
+    return () => { delete document.documentElement.dataset.siteStage; delete document.body.dataset.siteStage; };
+  }, [showHome]);
+  return <main className={styles.site} data-theme={preferences.resolvedTheme} data-view={showHome ? 'home' : 'film'} aria-label={text.overview}>
+    <PortfolioIntro text={text} locale={preferences.locale} reduced={reduced} pauseSignal={pauseSignal} onHome={onHome} onReplay={onReplay} homeVisible={showHome}>
+      <div className={styles.preferences} onFocusCapture={pause}>
+        <label>{text.theme}<select value={preferences.theme} onChange={event => { const value = event.target.value as Theme; preferences.setTheme(value); savePreference('snkisk-site-theme-v1', value); }}><option value="system">{text.system}</option><option value="light">{text.light}</option><option value="dark">{text.dark}</option></select></label>
+        <label>{text.language}<select value={preferences.language} onChange={event => { const value = event.target.value as Language; preferences.setLanguage(value); savePreference('snkisk-site-language-v1', value); }}><option value="system">{text.system}</option><option value="ja">日本語</option><option value="en">English</option></select></label>
+      </div>
+    </PortfolioIntro>
+    <div className={styles.homeFrame} hidden={!showHome} onFocusCapture={pause}><PortfolioHome locale={preferences.locale}/></div>
+  </main>;
 }
-
 export default function App() {
-  const shortcutDestination = SHORTCUT_DESTINATIONS[window.location.pathname];
-  const [stage, setStage] = useState<Stage>('reel');
-  const reduceMotion = Boolean(useReducedMotion());
-  const showReel = stage === 'reel';
-  const showClosingReel = stage === 'closing';
-  const showHome = stage === 'home';
-  const handleReelComplete = useCallback(() => setStage('closing'), []);
-  const handleHandoffCovered = useCallback(() => setStage('home'), []);
-
-  useEffect(() => {
-    document.documentElement.dataset.siteStage = stage;
-    document.body.dataset.siteStage = stage;
-    return () => {
-      delete document.documentElement.dataset.siteStage;
-      delete document.body.dataset.siteStage;
-    };
-  }, [stage]);
-
-  useEffect(() => {
-    if (shortcutDestination) {
-      window.location.replace(shortcutDestination);
-    }
-  }, [shortcutDestination]);
-
-  if (shortcutDestination) {
-    return null;
-  }
-
-  return (
-    <div className={`${styles.stage} ${showHome ? styles.stagePortfolio : ''}`}>
-      <AnimatePresence mode="sync" initial={false}>
-        {showHome ? (
-          <motion.div
-            className={styles.portfolioFrame}
-            key="portfolio-home"
-            initial={{ clipPath: 'inset(100% 0 0 0)', opacity: 0.4 }}
-            animate={{ clipPath: 'inset(0% 0 0 0)', opacity: 1 }}
-            transition={{ duration: 0.86, ease: [0.18, 0.89, 0.32, 1] }}
-          >
-            <PortfolioHome />
-          </motion.div>
-        ) : (
-          <motion.div
-            className={styles.frame}
-            key="project-showreel"
-            // The opening wipe must own frame zero; avoid a blank page before its color bands appear.
-            initial={{ opacity: 1, scale: 1.08, y: 0 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.18, 0.89, 0.32, 1.08] }}
-          >
-            <PortfolioSequence onComplete={handleReelComplete} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {showClosingReel ? (
-        <SiteHandoff phase="cover" reduceMotion={reduceMotion} onCovered={handleHandoffCovered} />
-      ) : showHome ? (
-        <SiteHandoff phase="reveal" reduceMotion={reduceMotion} onCovered={handleHandoffCovered} />
-      ) : null}
-    </div>
-  );
+  const destination = SHORTCUT_DESTINATIONS[window.location.pathname];
+  useEffect(() => { if (destination) window.location.replace(destination); }, [destination]);
+  return destination ? null : <PortfolioSite />;
 }
