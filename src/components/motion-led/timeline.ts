@@ -1,10 +1,10 @@
 /** All narrative geometry, text reveals and the final fixed-colour handoff share this clock. */
-export const DURATION = 12950;
-export const HOME_AT = 12250;
+export const DURATION = 9279;
+export const HOME_AT = 8719;
 const STORY_DURATION = 17400;
 const STORY_HOME_AT = 16600;
 // Per-scene editorial timings retain reading intervals without a uniform speed multiplier.
-const BEATS = [[0, 0], [2600, 3300], [5300, 6800], [9300, 11700], [10800, 13590], [11700, 16000], [HOME_AT, STORY_HOME_AT], [DURATION, STORY_DURATION]] as const;
+const BEATS = [[0, 0], [758, 1200], [1192, 2300], [3232, 5600], [3699, 6800], [5986, 10300], [6435, 11400], [7829, 13590], [8279, 16000], [HOME_AT, STORY_HOME_AT], [DURATION, STORY_DURATION]] as const;
 /** Authored story intervals after the motion settles and before the next movement. */
 export const READING_HOLDS = { go: [1200, 2300], legitils: [5600, 6800], minecraft: [10300, 11400], hensyoku: [13590, 16000] } as const;
 const rates = BEATS.slice(1).map(([clock, story], i) => (story - BEATS[i][1]) / (clock - BEATS[i][0]));
@@ -33,18 +33,18 @@ export function clockAt(story: number) {
 export const clamp = (value: number) => Math.max(0, Math.min(1, value));
 export const phase = (time: number, start: number, end: number) => clamp((time - start) / (end - start));
 export const ease = (time: number, start: number, end: number) => {
-  const t = phase(time, start, end); return t * t * (3 - 2 * t);
+  const t = phase(time, start, end), a = t * t, b = (1 - t) ** 2; return a / (a + b);
 };
 // All profiles have zero endpoint velocity. A stronger travel peak and asymmetric
 // settling/departure distinguish distance, form changes and outgoing typography.
 export const travelEase = (time: number, start: number, end: number) => {
-  const t = phase(time, start, end), a = t * t, b = (1 - t) ** 2; return a / (a + b);
+  const t = phase(time, start, end), a = t ** 3, b = (1 - t) ** 3; return a / (a + b);
 };
 export const settleEase = (time: number, start: number, end: number) => {
-  const t = phase(time, start, end), a = t * t, b = (1 - t) ** 3; return a / (a + b);
+  const t = phase(time, start, end), a = t ** 3, b = (1 - t) ** 4; return a / (a + b);
 };
 export const departureEase = (time: number, start: number, end: number) => {
-  const t = phase(time, start, end), a = t ** 3, b = (1 - t) ** 2; return a / (a + b);
+  const t = phase(time, start, end), a = t ** 4, b = (1 - t) ** 3; return a / (a + b);
 };
 export const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 export const mixColour = (a: string, b: string, t: number) => {

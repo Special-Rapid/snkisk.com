@@ -52,19 +52,21 @@ test('role-specific easing has distinct timing and a stronger travel peak',()=>{
  let previous=storyTime(0);for(let t=1;t<=DURATION;t++){const next=storyTime(t);assert.ok(next>previous,`timeline reversed at ${t}`);previous=next}
 });
 test('the moving object and camera cross editorial beats without a velocity jump',()=>{
- for(const height of [620,1200])for(const beat of [3300,6800,11700,13590,16000,16600]){
+ for(const height of [620,1200])for(const beat of [1200,2300,5600,6800,10300,11400,13590,16000,16600]){
   const t=clockAt(beat),dt=.5;
   const sample=x=>{const p=pose(x,height),worldX=v=>p.camera.pan+500+p.camera.scale*(v-500),worldY=v=>height/2+p.camera.scale*(v-height/2);return [worldX(p.core.x),worldY(p.core.y),p.core.w,p.camera.pan,p.camera.scale,...p.parts.flatMap(q=>[worldX(q.x),worldY(q.y),q.w,q.angle])];};
   const a=sample(t-dt),b=sample(t),c=sample(t+dt);
   for(let i=0;i<a.length;i++)assert.ok(Math.abs((b[i]-a[i])/dt-(c[i]-b[i])/dt)<.02,`velocity beat ${beat}, field ${i}`);
   assert.ok(Math.abs(storyTime(t)-beat)<1e-8);
-  const storyStep=.1;assert.ok(Math.abs((storyTime(t)-storyTime(t-storyStep))/storyStep-(storyTime(t+storyStep)-storyTime(t))/storyStep)<.001,`story velocity beat ${beat}`);
+  const difference=h=>Math.abs((storyTime(t)-storyTime(t-h))/h-(storyTime(t+h)-storyTime(t))/h);
+  assert.ok(difference(.01)<.001 && difference(.01)<difference(.1)*.2,`story velocity beat ${beat}`);
  }
 });
 
-test('each settled composition remains still for 0.8–1.0 seconds',()=>{
+test('each settled composition remains still for half its prior duration',()=>{
+ const previous={go:868.385,legitils:934.781,minecraft:898.951,hensyoku:900};
  for(const [name,[start,end]] of Object.entries(READING_HOLDS)){
-  const from=clockAt(start),to=clockAt(end);assert.ok(to-from>=800&&to-from<=1000,`${name}: ${to-from}ms`);
+  const from=clockAt(start),to=clockAt(end);assert.ok(Math.abs(to-from-previous[name]/2)<1,`${name}: ${to-from}ms`);
   for(const height of [390,620,901,1700]){
    const freeze=t=>{const {clock,time,...visual}=pose(t,height);return visual};
    assert.deepEqual(freeze(from+1),freeze(to-1),`${name} should remain still`);

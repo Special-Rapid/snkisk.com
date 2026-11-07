@@ -6,6 +6,9 @@
 .transport { position:absolute; z-index:4; top:max(var(--film-control-inset),env(safe-area-inset-top)); right:max(var(--film-control-inset),env(safe-area-inset-right)); display:flex; justify-content:flex-end; flex-wrap:wrap; gap:var(--space-xs); max-width:calc(100% - 2 * var(--film-control-inset)); font-size:var(--text-small); }
 .playbackControls { display:flex; align-items:flex-start; justify-content:flex-end; gap:var(--control-gap); flex-wrap:wrap; }
 .transport button,.transport summary { min-height:var(--film-control-target); display:inline-flex; align-items:center; gap:var(--space-xs); padding:var(--film-control-pad-y) var(--film-control-pad-x); color:var(--ink); background:var(--surface); border:1px solid var(--divider); border-radius:var(--radius-small); font:inherit; cursor:pointer; }
+.player[data-home='false'] .playbackControls button { color:var(--film-control-ink); background:var(--film-control-bg); border-color:var(--film-control-border); border-radius:var(--radius-control); }
+.player[data-home='false'] .playbackControls button:hover { background:var(--film-control-bg-hover); }
+.player[data-home='false'] .playbackControls button:focus-visible { outline-color:var(--film-control-ink); box-shadow:0 0 0 calc(var(--focus-width) + var(--focus-gap)) var(--film-control-focus); }
 .transport .iconButton { min-width:var(--film-control-target); justify-content:center; padding:var(--film-control-pad-y); }
 .iconButton svg { width:var(--control-icon-size); height:var(--control-icon-size); }
 .transport button:focus-visible,.projects summary:focus-visible,.projects a:focus-visible { outline:var(--focus-width) solid var(--focus); outline-offset:var(--focus-gap); }
